@@ -1,4 +1,4 @@
-from supabase import create_client
+from supabase import create_client, Client
 import streamlit as st
 
 # --- Supabase Config ---
