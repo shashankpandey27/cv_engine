@@ -1,0 +1,7 @@
+[theme]
+base="light"
+primaryColor="#12ABDB"  # Capgemini Primary Blue
+backgroundColor="#FFFFFF"  # White background for a clean look
+secondaryBackgroundColor="#F2F4F8"  # Light grey for sidebar/panels
+textColor="#000000"  # Black text for good readability
+font="sans serif"
