@@ -7,4 +7,4 @@ SUPABASE_URL = st.secrets["supabase"]["url"]
 SUPABASE_KEY = st.secrets["supabase"]["key"]
 SUPABASE_SERVICE_KEY = st.secrets["supabase"]["service_key"]
 BUCKET_NAME = st.secrets["supabase"]["bucket"]
-supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
