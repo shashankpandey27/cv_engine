@@ -645,7 +645,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                         # upload all cvs to supabase for the run  
                         if uploaded_cv is not None:
                             print("Generating role scores..")
-                            generate_role_scores_and_upload(uploaded_cv,cleaned_text)
+                            generate_role_scores_and_upload(uploaded_cv)
                                                     
                         if uploaded_cv.name in selected_cv_filenames:
                             # pdf_text = extract_text_from_pdf(uploaded_cv)
