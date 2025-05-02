@@ -30,7 +30,7 @@ if auth_status:
 
     #st.set_page_config(page_title="Candidate CV App")
     st.title("🏠 CV Review Platform")
-    st.sidebar.image(".static\logo.svg")
+    st.sidebar.image("logo.svg")
 
     st.markdown("""
     Welcome! Use the sidebar to navigate between:
