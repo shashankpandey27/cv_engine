@@ -21,33 +21,12 @@ import ssl
 import certifi
 from supabase import create_client, Client
 from Login import get_authenticator
+from supabase_client import supabase
 
 if st.session_state.get("authentication_status") != True:
     st.warning("Please login to access this page.")
     st.stop()
 
-
-# --- Supabase Config ---
-SUPABASE_URL = "https://bidvgtspaijadkddvbxv.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpZHZndHNwYWlqYWRrZGR2Ynh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5OTA0MjMsImV4cCI6MjA2MTU2NjQyM30.1C4UCQe_1uSXvv0Y1ALJVzkQvejoy__xpHygc2NmeCY"
-BUCKET_NAME = "cv-uploads"
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-ssl_context = ssl.create_default_context(cafile=certifi.where())
-
-# with open('credentials.yaml') as file:
-#     config = yaml.load(file, Loader=SafeLoader)
-
-
-# # Pre-hashing all plain text passwords once
-# # stauth.Hasher.hash_passwords(config['credentials'])
-
-# authenticator = stauth.Authenticate(
-#     config['credentials'],
-#     config['cookie']['name'],
-#     config['cookie']['key'],
-#     config['cookie']['expiry_days']
-# )
 
 # Inject logo and favicon
 def add_favicon():
