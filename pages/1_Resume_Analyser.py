@@ -411,7 +411,7 @@ st.write("Upload job descriptions and resumes to find the best matches.")
 
 
 # Sidebar for API key and weights CSV upload
-st.sidebar.image(".static\logo.svg")
+st.sidebar.image("logo.svg")
 st.sidebar.title("Configuration")
 with st.sidebar:
     user_api_key = st.text_input("Enter your Gemini API key:", type="password")
