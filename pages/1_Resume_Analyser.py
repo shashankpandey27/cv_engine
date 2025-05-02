@@ -21,7 +21,7 @@ import ssl
 import certifi
 from supabase import create_client, Client
 from Login import get_authenticator
-from supabase_client import supabase
+from supabase_client import supabase , BUCKET_NAME
 
 if st.session_state.get("authentication_status") != True:
     st.warning("Please login to access this page.")
