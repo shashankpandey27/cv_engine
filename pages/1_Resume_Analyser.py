@@ -467,7 +467,7 @@ def generate_role_scores_and_upload(uploaded_cv):
         public_path = f"{best_role}/{uuid.uuid4()}_{filename}"
  
         # Check duplicate
-        existing = supabase.table("cvs").select("*").eq("file_name", filename).execute()
+        existing = supabase.table("cvs_table").select("*").eq("file_name", filename).execute()
         if existing.data:
             st.warning("This CV already exists.")
         else:
@@ -478,7 +478,7 @@ def generate_role_scores_and_upload(uploaded_cv):
             url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
  
             # Save metadata
-            supabase.table("cvs").insert({
+            supabase.table("cvs_table").insert({
                 "name": filename.split(".")[0],
                 "file_name": filename,
                 "role_scores": role_scores,
