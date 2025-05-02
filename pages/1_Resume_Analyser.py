@@ -20,13 +20,38 @@ from yaml.loader import SafeLoader
 import ssl 
 import certifi
 from supabase import create_client, Client
+
 from Login import get_authenticator
-from supabase_client import supabase , BUCKET_NAME
+from genai_extract import extract_role_scores
+import uuid
+from supabase_client import supabase, BUCKET_NAME
 
 if st.session_state.get("authentication_status") != True:
     st.warning("Please login to access this page.")
     st.stop()
 
+
+# --- Supabase Config ---
+# SUPABASE_URL = "https://bidvgtspaijadkddvbxv.supabase.co"
+# SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpZHZndHNwYWlqYWRrZGR2Ynh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5OTA0MjMsImV4cCI6MjA2MTU2NjQyM30.1C4UCQe_1uSXvv0Y1ALJVzkQvejoy__xpHygc2NmeCY"
+# BUCKET_NAME = "cv-uploads"
+# supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# ssl_context = ssl.create_default_context(cafile=certifi.where())
+
+# with open('credentials.yaml') as file:
+#     config = yaml.load(file, Loader=SafeLoader)
+
+
+# # Pre-hashing all plain text passwords once
+# # stauth.Hasher.hash_passwords(config['credentials'])
+
+# authenticator = stauth.Authenticate(
+#     config['credentials'],
+#     config['cookie']['name'],
+#     config['cookie']['key'],
+#     config['cookie']['expiry_days']
+# )
 
 # Inject logo and favicon
 def add_favicon():
@@ -386,7 +411,7 @@ st.write("Upload job descriptions and resumes to find the best matches.")
 
 
 # Sidebar for API key and weights CSV upload
-st.sidebar.image("logo.svg")
+st.sidebar.image(".static\logo.svg")
 st.sidebar.title("Configuration")
 with st.sidebar:
     user_api_key = st.text_input("Enter your Gemini API key:", type="password")
@@ -430,6 +455,36 @@ with st.sidebar:
 
 genai.configure(api_key=user_api_key)
 gemini_model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
+
+def generate_role_scores_and_upload(uploaded_cv): 
+    cv_bytes = uploaded_cv.read()
+    cv_text = cv_bytes.decode("utf-8", errors="ignore")  # or use pdfminer for actual text
+    role_scores = extract_role_scores(cv_text)
+ 
+    if role_scores:
+        best_role = max(role_scores, key=role_scores.get)
+        filename = uploaded_cv.name.replace(" ", "_")
+        public_path = f"{best_role}/{uuid.uuid4()}_{filename}"
+ 
+        # Check duplicate
+        existing = supabase.table("cvs").select("*").eq("file_name", filename).execute()
+        if existing.data:
+            st.warning("This CV already exists.")
+        else:
+            # Upload file
+            supabase.storage.from_(BUCKET_NAME).upload(public_path, cv_bytes)
+ 
+            # Get public URL
+            url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
+ 
+            # Save metadata
+            supabase.table("cvs").insert({
+                "name": filename.split(".")[0],
+                "file_name": filename,
+                "role_scores": role_scores,
+                "download_url": url
+            }).execute()
+            st.success("Uploaded and scored successfully!")
 
 
 uploaded_jds = st.file_uploader("Upload Job Description", type=["pdf"], accept_multiple_files=False, 
@@ -585,13 +640,17 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                     selected_cv_filenames = selected_rows_df['Resume'].tolist() if not selected_rows_df.empty else edited_df['Resume'].tolist()
                     # Process each resume, extract information, and store the structured data
                     for uploaded_cv in uploaded_cvs:
+                        pdf_text = extract_text_from_pdf(uploaded_cv)
+                        cleaned_text = clean_text(pdf_text)
                         # upload all cvs to supabase for the run  
                         if uploaded_cv is not None:
-                            public_url = upload_to_supabase(uploaded_cv)  
-
+                            print("Generating role scores..")
+                            generate_role_scores_and_upload(uploaded_cv,cleaned_text)
+                                                    
                         if uploaded_cv.name in selected_cv_filenames:
-                            pdf_text = extract_text_from_pdf(uploaded_cv)
-                            cleaned_text = clean_text(pdf_text)
+                            # pdf_text = extract_text_from_pdf(uploaded_cv)
+                            # cleaned_text = clean_text(pdf_text)
+                            print("Generating CG ppt..")
                             llm_extraction = extract_information_from_cv(cleaned_text)
                             #print(str(resume) + " analysed !")
                             time.sleep(1)  # Throttle API requests to avoid hitting limits
