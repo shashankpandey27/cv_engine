@@ -34,7 +34,7 @@ def get_role_progress_html(role_matches):
     return html
 
 # Fetch data
-data = supabase.table("cvs").select("*").execute().data
+data = supabase.table("cvs_table").select("*").execute().data
  
 # Extract unique roles
 all_roles = sorted({role for row in data for role in row["role_scores"]})
