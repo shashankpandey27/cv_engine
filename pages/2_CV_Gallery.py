@@ -111,37 +111,37 @@ else:
 <strong style="font-size: 16px; margin-bottom: 12px;">{person['name']}</strong>
 """
  
-            # Top 2-3 role scores
-            top_roles = sorted(
-                [(r, s) for r, s in person["role_scores"].items() if r.lower() != "name"],
-                key=lambda x: x[1], reverse=True
-            )[:5] # top N roles 
-             
-            for role, score in top_roles:
-                color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
-                tile_html += f"""
-            <div style="width: 100%; max-width: 220px; margin-bottom: 10px;">
-            <small><strong>{role}</strong></small>
-            <div style="background-color:#e0e0e0; border-radius:8px; overflow: hidden;">
-            <div style="width:{score}%; background:{color}; color:white;
-                                    padding:5px 0; font-size:12px; text-align:center;">
-                            {score}%
-            </div>
-            </div>
-            </div>
-                """
-             
-            # Download link
-            if person.get("download_url"):
-                tile_html += f"""
-            <a href="{person['download_url']}" target="_blank"
-                   style="margin-top: 10px; font-size:13px; text-decoration: none; color: #3366cc;">
-                   📄 Download CV
-            </a>
-                """
-            else:
-                tile_html += "<p style='color:red; font-size:12px;'>No CV link</p>"
-             
-            tile_html += "</div>"
-             
-            col.markdown(tile_html, unsafe_allow_html=True)
+        # Top 2-3 role scores
+        top_roles = sorted(
+            [(r, s) for r, s in person["role_scores"].items() if r.lower() != "name"],
+            key=lambda x: x[1], reverse=True
+        )[:5] # top N roles 
+         
+        for role, score in top_roles:
+            color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
+            tile_html += f"""
+        <div style="width: 100%; max-width: 220px; margin-bottom: 10px;">
+        <small><strong>{role}</strong></small>
+        <div style="background-color:#e0e0e0; border-radius:8px; overflow: hidden;">
+        <div style="width:{score}%; background:{color}; color:white;
+                                padding:5px 0; font-size:12px; text-align:center;">
+                        {score}%
+        </div>
+        </div>
+        </div>
+            """
+         
+        # Download link
+        if person.get("download_url"):
+            tile_html += f"""
+        <a href="{person['download_url']}" target="_blank"
+               style="margin-top: 10px; font-size:13px; text-decoration: none; color: #3366cc;">
+               📄 Download CV
+        </a>
+            """
+        else:
+            tile_html += "<p style='color:red; font-size:12px;'>No CV link</p>"
+         
+        tile_html += "</div>"
+         
+        col.markdown(tile_html, unsafe_allow_html=True)
