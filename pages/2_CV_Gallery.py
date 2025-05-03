@@ -12,20 +12,30 @@ st.set_page_config(layout="wide")
 with st.spinner("Loading data ..."):
      st.title("🎓 Candidate CV Gallery")
     
-     # Caching the fetch
-@st.cache_data(show_spinner="Fetching candidate data...")
-def fetch_candidates():
+#      # Caching the fetch
+# @st.cache_data(show_spinner="Fetching candidate data...")
+# def fetch_candidates():
+#     return supabase.table("cvs_table").select("*").execute().data
+ 
+# --- Caching Supabase data ---
+@st.cache_data(ttl=600)
+def load_data():
     return supabase.table("cvs_table").select("*").execute().data
  
-
+# --- Refresh control ---
+if "refresh" not in st.session_state:
+    st.session_state.refresh = False
+ 
+ 
+data = load_data() if not st.session_state.refresh else supabase.table("cvs_table").select("*").execute().data
+st.session_state.refresh = False  # Reset flag
  
 # Sidebar filters
 with st.sidebar:
     #st.markdown("### 🔎 Filter by Role Score")
     # Refresh button
-    if st.button("🔄 Refresh Data"):
-        fetch_candidates().clear()
-        st.rerun()
+    if st.button("🔄 Refresh Candidates"):
+        st.session_state.refresh = True
     authenticator = get_authenticator()
     authenticator.logout()
     #selected_role_filter = st.selectbox("Role", ["Any"])
@@ -42,7 +52,7 @@ with st.sidebar:
     )
  
 # Load data once
-data = fetch_candidates()
+#data = fetch_candidates()
  
 # Extract all unique role types
 all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
