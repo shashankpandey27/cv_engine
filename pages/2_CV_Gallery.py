@@ -1,5 +1,5 @@
 import streamlit as st
-from supabase_client import supabase
+from supabase_client import supabase, BUCKET_NAME
 from Login import get_authenticator
 
 
