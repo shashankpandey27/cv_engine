@@ -31,27 +31,6 @@ if st.session_state.get("authentication_status") != True:
     st.stop()
 
 
-# --- Supabase Config ---
-# SUPABASE_URL = "https://bidvgtspaijadkddvbxv.supabase.co"
-# SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpZHZndHNwYWlqYWRrZGR2Ynh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5OTA0MjMsImV4cCI6MjA2MTU2NjQyM30.1C4UCQe_1uSXvv0Y1ALJVzkQvejoy__xpHygc2NmeCY"
-# BUCKET_NAME = "cv-uploads"
-# supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-# ssl_context = ssl.create_default_context(cafile=certifi.where())
-
-# with open('credentials.yaml') as file:
-#     config = yaml.load(file, Loader=SafeLoader)
-
-
-# # Pre-hashing all plain text passwords once
-# # stauth.Hasher.hash_passwords(config['credentials'])
-
-# authenticator = stauth.Authenticate(
-#     config['credentials'],
-#     config['cookie']['name'],
-#     config['cookie']['key'],
-#     config['cookie']['expiry_days']
-# )
 
 # Inject logo and favicon
 def add_favicon():
@@ -363,13 +342,6 @@ def generate_individual_ppts(cv_data_list, template_path_male, template_path_fem
  
     return zip_filename
 
-# # LOGIN WIDGET 
-# try:
-#     authenticator.login()
-# except Exception as e:
-#     st.error(e)
-
-
 
     
 if "scores_df" not in st.session_state:
@@ -640,16 +612,17 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                     selected_cv_filenames = selected_rows_df['Resume'].tolist() if not selected_rows_df.empty else edited_df['Resume'].tolist()
                     # Process each resume, extract information, and store the structured data
                     for uploaded_cv in uploaded_cvs:
-                        pdf_text = extract_text_from_pdf(uploaded_cv)
-                        cleaned_text = clean_text(pdf_text)
+
                         # upload all cvs to supabase for the run  
-                        if uploaded_cv is not None:
+                        if uploaded_cv is not None: # for all 
                             print("Generating role scores..")
+                            pdf_text = extract_text_from_pdf(uploaded_cv)
+                            cleaned_text = clean_text(pdf_text)
                             generate_role_scores_and_upload(uploaded_cv)
                                                     
-                        if uploaded_cv.name in selected_cv_filenames:
-                            # pdf_text = extract_text_from_pdf(uploaded_cv)
-                            # cleaned_text = clean_text(pdf_text)
+                        if uploaded_cv.name in selected_cv_filenames: # for selected or all 
+                            pdf_text = extract_text_from_pdf(uploaded_cv)
+                            cleaned_text = clean_text(pdf_text)
                             print("Generating CG ppt..")
                             llm_extraction = extract_information_from_cv(cleaned_text)
                             #print(str(resume) + " analysed !")
