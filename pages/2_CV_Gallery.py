@@ -80,7 +80,7 @@ with st.sidebar:
 filtered = []
 for row in data:
     # Filter by selected display role (main page)
-    if selected_role != "All" and selected_role not in row["role_scores"]:
+    if selected_role_filter != "Any" and selected_role_filter not in row["role_scores"]:
         continue
     # Filter by search query
     if search_query and search_query not in row["name"].lower():
