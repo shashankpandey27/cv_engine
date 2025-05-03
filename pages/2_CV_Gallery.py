@@ -34,85 +34,104 @@ with st.spinner("Loading data ..."):
             """
         return html
     
-    # Fetch data
-    data = supabase.table("cvs_table").select("*").execute().data 
+# Fetch data
+@st.cache_data(ttl=600)
+def load_cv_data():
+    return supabase.table("cvs_table").select("*").execute().data
 
-    
+data = load_cv_data()
 
-    col1 , col2 = st.columns([1,2])
+col1, col2 = st.columns([1, 2])
+ 
+with col1:
+    # Extract unique roles
+    all_roles = sorted({role for row in data for role in row["role_scores"]})
+    selected_role = st.selectbox("🎯 Filter by Display Role", ["All"] + all_roles)
+ 
+with col2:
+    # Search input
+    search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
+ 
+# Sidebar filter for score
+with st.sidebar:
+    st.markdown("### 🔎 Filter by Role Score")
+    selected_role_filter = st.selectbox("Role", ["Any"] + all_roles)
+    min_score = st.slider("Minimum Score", 0, 100, 0)
 
-    with col1:
-        # Extract unique roles
-        all_roles = sorted({role for row in data for role in row["role_scores"]})
-        selected_role = st.selectbox("🎯 Filter by Role", ["All"] + all_roles)
+    if st.button("🔄 Refresh CV Data"):
+        load_cv_data.clear()  # Clear the cache
+        st.experimental_rerun()  # Force rerun to reload fresh data
+   
     
-    with col2:
-        # Search input
-        search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
-     
-    
-    # Role score filter UI
-    with st.sidebar:
-        st.markdown("### 🔎 Filter by Role Score")
-        selected_role_filter = st.selectbox("Role", ["Any"] + all_roles)
-        min_score = st.slider("Minimum Score", 0, 100, 0)
-    
-        authenticator = get_authenticator()
-        authenticator.logout() # logout button in sidebar 
-    
-        st.markdown(
+    authenticator = get_authenticator()
+    authenticator.logout()
+ 
+    st.markdown(
         """
-        <marquee behavior="scroll" direction="left" style="color:#0070AD; font-size:13px">
+<marquee behavior="scroll" direction="left" style="color:#0070AD; font-size:13px">
         Disclaimer™: An I&D Middle East tool.
-        </marquee>
+</marquee>
         """,
-        unsafe_allow_html=True)
-    
-    # Filter candidates
-    filtered = []
-    for row in data:
-        if selected_role == "All" or selected_role in row["role_scores"]:
-            filtered.append(row)
-     
-    if not filtered:
-        st.warning("No matching candidates.")
-    else:
-        rows = [filtered[i:i + 5] for i in range(0, len(filtered), 5)]
-        for row in rows:
-            cols = st.columns(len(row))
-            for col, person in zip(cols, row):
+        unsafe_allow_html=True
+    )
+ 
+# Apply filters
+filtered = []
+for row in data:
+    # Filter by selected display role (main page)
+    if selected_role != "All" and selected_role not in row["role_scores"]:
+        continue
+    # Filter by search query
+    if search_query and search_query not in row["name"].lower():
+        continue
+    # Filter by role score from sidebar
+    if selected_role_filter != "Any":
+        role_score = row["role_scores"].get(selected_role_filter, 0)
+        if role_score < min_score:
+            continue
+    filtered.append(row)
+ 
+# Display filtered candidates
+if not filtered:
+    st.warning("No matching candidates.")
+else:
+    rows = [filtered[i:i + 5] for i in range(0, len(filtered), 5)]
+    for row in rows:
+        cols = st.columns(len(row))
+        for col, person in zip(cols, row):
+            # Start tile
+            col.markdown(f"""
+<div style="padding: 10px; border-radius: 8px; background-color: #f9f9f9; 
+             box-shadow: 0 1px 4px rgba(0,0,0,0.1); min-height: 200px;">
+<strong>{person['name']}</strong><br><br>
+            """, unsafe_allow_html=True)
+ 
+            # Top 3 roles by score
+            top_roles = sorted(
+                [(r, s) for r, s in person["role_scores"].items() if r.lower() != "name"],
+                key=lambda x: x[1], reverse=True
+            )[:3]
+ 
+            for role, score in top_roles:
+                color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
                 col.markdown(f"""
-    <div style="padding: 10px; border-radius: 8px; background-color: #f9f9f9; 
-                box-shadow: 0 1px 4px rgba(0,0,0,0.1); min-height: 200px;">
-    <strong>{person['name']}</strong><br><br>
-                """, unsafe_allow_html=True)
-     
-                # Sort and get top 3 role scores
-                top_roles = sorted(
-                    [(r, s) for r, s in person["role_scores"].items() if r.lower() != "name"],
-                    key=lambda x: x[1], reverse=True
-                )[:3]
-     
-                for role, score in top_roles:
-                    color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
-                    col.markdown(f"""
-    <div style="margin-bottom: 4px;">
-    <small><strong>{role}</strong></small>
-    <div style="background-color:#e0e0e0; border-radius:6px;">
-    <div style="width:{score}%; background:{color}; color:white; padding:3px 0; font-size:11px; text-align:center;">
+<div style="margin-bottom: 4px;">
+<small><strong>{role}</strong></small>
+<div style="background-color:#e0e0e0; border-radius:6px;">
+<div style="width:{score}%; background:{color}; color:white; padding:3px 0; font-size:11px; text-align:center;">
         {score}%
-    </div>
-    </div>
-    </div>
-                    """, unsafe_allow_html=True)
-     
-                # Ensure the download URL is safe and displayed as a proper link
-                if person.get("download_url"):
-                    download_link = person["download_url"]
-                    col.markdown(f"""
-    <a href="{download_link}" target="_blank" style="text-decoration:none; font-size:13px;">📄 Download CV</a>
-    </div>
-                    """, unsafe_allow_html=True)
-                else:
-                    col.warning("No download link available.")
-            st.markdown("### &nbsp;")
+</div>
+</div>
+</div>
+                """, unsafe_allow_html=True)
+ 
+            # Download link
+            if person.get("download_url"):
+                col.markdown(f"""
+<a href="{person['download_url']}" target="_blank" style="text-decoration:none; font-size:13px;">📄 Download CV</a>
+</div> <!-- END TILE -->
+                """, unsafe_allow_html=True)
+            else:
+                col.markdown("No download link available.</div>", unsafe_allow_html=True)
+ 
+    st.markdown("### &nbsp;")
