@@ -40,19 +40,26 @@ with st.sidebar:
 # Load data once
 data = fetch_candidates()
  
+# Extract roles for the main filter
+all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
+selected_role = st.selectbox("🎯 Filter by Role Type", ["All"] + all_roles)
+ 
 # Score slider for filtering
 min_score = st.slider("🔘 Filter by Minimum Score", 0, 100, 0)
  
-# Search query
+# Search query (optional)
 search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
  
-# Filter candidates based on search and score
+# Filter candidates based on selected role, score, and search query
 filtered = []
 for row in data:
     name_match = search_query in row["name"].lower()
-    # Ensure role scores meet the minimum score criteria
-    role_match = any(score >= min_score for score in row["role_scores"].values())
-    if name_match and role_match:
+ 
+    # Check if the role matches the selected role (if "All", we don't filter by role)
+    role_match = selected_role == "All" or selected_role in row["role_scores"]
+    # Check if any of the role scores meets the minimum score
+    score_match = any(score >= min_score for score in row["role_scores"].values())
+    if name_match and role_match and score_match:
         filtered.append(row)
  
 # Display a warning if no candidates match the filter
@@ -106,4 +113,3 @@ else:
                     html += "<div style='color:red; font-size:12px;'>⚠️ No download link</div>"
                 html += "</div>"
                 st.markdown(html, unsafe_allow_html=True)
-    
