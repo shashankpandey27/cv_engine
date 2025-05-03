@@ -446,7 +446,7 @@ def generate_role_scores_and_upload(uploaded_cv):
             st.warning("This CV already exists.")
         else:
             # Upload file
-            supabase.storage.from_(BUCKET_NAME).upload(public_path, cv_bytes)
+            supabase.storage.from_(BUCKET_NAME).upload(public_path, uploaded_cv.read())
  
             # Get public URL
             url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
@@ -617,11 +617,12 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
 
                         # upload all cvs to supabase for the run  
                         if uploaded_cv is not None: # for all 
-                            st.write("Generating role scores..")
+                            #st.write("Generating role scores..")
                             # pdf_text = extract_text_from_pdf(uploaded_cv)
                             # cleaned_text = clean_text(pdf_text)
                             generate_role_scores_and_upload(uploaded_cv)
-                                                    
+
+                    for uploaded_cv in uploaded_cvs:    
                         if uploaded_cv.name in selected_cv_filenames: # for selected or all 
                             pdf_text = extract_text_from_pdf(uploaded_cv)
                             cleaned_text = clean_text(pdf_text)
