@@ -28,7 +28,7 @@ def extract_role_scores(cv_text):
       "Data Engineer": 65,
       ...
     }}
-    Only include roles that are relevant with a score >= 20.
+    Only include roles that are relevant with a score >= 20. Name should always be included.
     """
     response = ask_gemini(prompt)
     try:
