@@ -438,6 +438,7 @@ def generate_role_scores_and_upload(uploaded_cv):
     if role_scores:
         role_score_only = {k: v for k, v in role_scores.items() if isinstance(v, (int, float))}
         best_role = max(role_score_only, key=role_score_only.get)
+        best_role = best_role.replace(" ","_")
         filename = uploaded_cv.name.replace(" ", "_")
         public_path = f"{best_role}/{uuid.uuid4()}_{filename}"
  
