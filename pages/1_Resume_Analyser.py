@@ -429,9 +429,11 @@ genai.configure(api_key=user_api_key)
 gemini_model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
 
 def generate_role_scores_and_upload(uploaded_cv): 
-    cv_bytes = uploaded_cv.read()
-    cv_text = cv_bytes.decode("utf-8", errors="ignore")  # or use pdfminer for actual text
-    role_scores = extract_role_scores(cv_text)
+    #cv_bytes = uploaded_cv.read()
+    pdf_text = extract_text_from_pdf(uploaded_cv)
+    cleaned_text = clean_text(pdf_text)
+    #cv_text = cv_bytes.decode("utf-8", errors="ignore")  # or use pdfminer for actual text
+    role_scores = extract_role_scores(cleaned_text)
  
     if role_scores:
         best_role = max(role_scores, key=role_scores.get)
@@ -616,8 +618,8 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                         # upload all cvs to supabase for the run  
                         if uploaded_cv is not None: # for all 
                             st.write("Generating role scores..")
-                            pdf_text = extract_text_from_pdf(uploaded_cv)
-                            cleaned_text = clean_text(pdf_text)
+                            # pdf_text = extract_text_from_pdf(uploaded_cv)
+                            # cleaned_text = clean_text(pdf_text)
                             generate_role_scores_and_upload(uploaded_cv)
                                                     
                         if uploaded_cv.name in selected_cv_filenames: # for selected or all 
