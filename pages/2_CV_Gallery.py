@@ -51,7 +51,7 @@ col1 , col2 = st.columns([1,2])
 with col1:
     # Main role filter dropdown
     selected_role = st.selectbox("🎯 Filter by Role Type", ["All"] + all_roles)
-with col1: 
+with col2: 
     # Search by candidate name
     search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
  
