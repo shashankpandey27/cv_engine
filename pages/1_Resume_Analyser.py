@@ -708,7 +708,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                 st.error("Template files not found. Ensure both 'cg_template_male.pptx' and 'cg_template_female.pptx' exist.")
             else:
                 with st.spinner("🎉 Baking the CVs in our awesome CG template!"):
-                    cv_data_list = []
+                   
      
                     # Build the list of selected filenames
                     if not selected_rows_df.empty:
@@ -731,6 +731,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                                 continue
      
                     # Second pass: generate CG slides only for selected CVs
+                    cv_data_list = []
                     for uploaded_cv in uploaded_cvs:
                         if uploaded_cv.name in selected_cv_filenames:
                             try:
