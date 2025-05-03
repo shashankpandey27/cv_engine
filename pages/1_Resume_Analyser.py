@@ -720,15 +720,15 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
      
                     st.write("Selected filenames for CG generation:", selected_cv_filenames)
      
-                    # First pass: upload all CVs
-                    for uploaded_cv in uploaded_cvs:
-                        if uploaded_cv is not None:
-                            st.write(f"🔍 Generating role scores for: {uploaded_cv.name}")
-                            try:
-                                generate_role_scores_and_upload(uploaded_cv)
-                            except Exception as e:
-                                st.error(f"❌ Failed to upload or score {uploaded_cv.name}: {str(e)}")
-                                continue
+                    # # First pass: upload all CVs
+                    # for uploaded_cv in uploaded_cvs:
+                    #     if uploaded_cv is not None:
+                    #         st.write(f"🔍 Generating role scores for: {uploaded_cv.name}")
+                    #         try:
+                    #             generate_role_scores_and_upload(uploaded_cv)
+                    #         except Exception as e:
+                    #             st.error(f"❌ Failed to upload or score {uploaded_cv.name}: {str(e)}")
+                    #             continue
      
                     # Second pass: generate CG slides only for selected CVs
                     cv_data_list = []
