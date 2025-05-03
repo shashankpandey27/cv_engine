@@ -43,10 +43,10 @@ data = load_cv_data()
 
 col1, col2 = st.columns([1, 2])
  
-with col1:
-    # Extract unique roles
-    all_roles = sorted({role for row in data for role in row["role_scores"]})
-    selected_role = st.selectbox("🎯 Filter by Display Role", ["All"] + all_roles)
+# with col1:
+#     # Extract unique roles
+#     all_roles = sorted({role for row in data for role in row["role_scores"]})
+#     selected_role = st.selectbox("🎯 Filter by Display Role", ["All"] + all_roles)
  
 with col2:
     # Search input
@@ -55,7 +55,7 @@ with col2:
 # Sidebar filter for score
 with st.sidebar:
     st.markdown("### 🔎 Filter by Role Score")
-    selected_role_filter = st.selectbox("Role", ["Any"] + all_roles)
+    selected_role_filter = st.selectbox("🎯 Filter by Display Role", ["Any"] + all_roles)
     min_score = st.slider("Minimum Score", 0, 100, 0)
 
     if st.button("🔄 Refresh CV Data"):
