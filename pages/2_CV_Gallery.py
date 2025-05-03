@@ -76,20 +76,36 @@ else:
         for col, person in zip(cols, row):
             col.markdown(f"""
 <div style="padding: 10px; border-radius: 8px; background-color: #f9f9f9; 
-                            box-shadow: 0 1px 4px rgba(0,0,0,0.1); min-height: 200px;">
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1); min-height: 200px;">
 <strong>{person['name']}</strong><br><br>
             """, unsafe_allow_html=True)
-            for role, score in person["role_scores"].items():
+ 
+            # Sort and get top 3 role scores
+            top_roles = sorted(
+                [(r, s) for r, s in person["role_scores"].items() if r.lower() != "name"],
+                key=lambda x: x[1], reverse=True
+            )[:3]
+ 
+            for role, score in top_roles:
                 color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
                 col.markdown(f"""
 <div style="margin-bottom: 4px;">
 <small><strong>{role}</strong></small>
 <div style="background-color:#e0e0e0; border-radius:6px;">
 <div style="width:{score}%; background:{color}; color:white; padding:3px 0; font-size:11px; text-align:center;">
-                                {score}%
+    {score}%
 </div>
 </div>
 </div>
                 """, unsafe_allow_html=True)
-            col.markdown(f"""<br><a href="{person['download_url']}" target="_blank">📄 Download CV</a></div>""", unsafe_allow_html=True)
-            st.markdown("### &nbsp;")  # Space between rows
+ 
+            # Ensure the download URL is safe and displayed as a proper link
+            if person.get("download_url"):
+                download_link = person["download_url"]
+                col.markdown(f"""
+<a href="{download_link}" target="_blank" style="text-decoration:none; font-size:13px;">📄 Download CV</a>
+</div>
+                """, unsafe_allow_html=True)
+            else:
+                col.warning("No download link available.")
+        st.markdown("### &nbsp;")
