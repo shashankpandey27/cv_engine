@@ -101,38 +101,47 @@ else:
         cols = st.columns(len(row))
         for col, person in zip(cols, row):
             # Start tile
-            col.markdown(f"""
-<div style="padding: 10px; border-radius: 8px; background-color: #f9f9f9; 
-             box-shadow: 0 1px 4px rgba(0,0,0,0.1); min-height: 200px;">
-<strong>{person['name']}</strong><br><br>
-            """, unsafe_allow_html=True)
+            tile_html = f"""
+<div style="padding: 16px; border-radius: 12px; background-color: #f9f9f9;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.1); min-height: 250px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: all 0.3s ease;"
+     onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'; this.style.transform='scale(1.02)';"
+     onmouseout="this.style.boxShadow='0 1px 6px rgba(0,0,0,0.1)'; this.style.transform='scale(1)';">
+<strong style="font-size: 16px; margin-bottom: 12px;">{person['name']}</strong>
+"""
  
-            # Top 3 roles by score
-            top_roles = sorted(
-                [(r, s) for r, s in person["role_scores"].items() if r.lower() != "name"],
-                key=lambda x: x[1], reverse=True
-            )[:5]
+# Top 2-3 role scores
+top_roles = sorted(
+    [(r, s) for r, s in person["role_scores"].items() if r.lower() != "name"],
+    key=lambda x: x[1], reverse=True
+)[:5] # top N roles 
  
-            for role, score in top_roles:
-                color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
-                col.markdown(f"""
-<div style="margin-bottom: 4px;">
+for role, score in top_roles:
+    color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
+    tile_html += f"""
+<div style="width: 100%; max-width: 220px; margin-bottom: 10px;">
 <small><strong>{role}</strong></small>
-<div style="background-color:#e0e0e0; border-radius:6px;">
-<div style="width:{score}%; background:{color}; color:white; padding:3px 0; font-size:11px; text-align:center;">
-        {score}%
+<div style="background-color:#e0e0e0; border-radius:8px; overflow: hidden;">
+<div style="width:{score}%; background:{color}; color:white;
+                        padding:5px 0; font-size:12px; text-align:center;">
+                {score}%
 </div>
 </div>
 </div>
-                """, unsafe_allow_html=True)
+    """
  
-            # Download link
-            if person.get("download_url"):
-                col.markdown(f"""
-<a href="{person['download_url']}" target="_blank" style="text-decoration:none; font-size:13px;">📄 Download CV</a>
-</div> <!-- END TILE -->
-                """, unsafe_allow_html=True)
-            else:
-                col.markdown("No download link available.</div>", unsafe_allow_html=True)
+# Download link
+if person.get("download_url"):
+    tile_html += f"""
+<a href="{person['download_url']}" target="_blank"
+       style="margin-top: 10px; font-size:13px; text-decoration: none; color: #3366cc;">
+       📄 Download CV
+</a>
+    """
+else:
+    tile_html += "<p style='color:red; font-size:12px;'>No CV link</p>"
  
-    st.markdown("### &nbsp;")
+tile_html += "</div>"
+ 
+col.markdown(tile_html, unsafe_allow_html=True)
