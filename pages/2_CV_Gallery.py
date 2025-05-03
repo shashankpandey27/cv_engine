@@ -110,7 +110,7 @@ else:
             top_roles = sorted(
                 [(r, s) for r, s in person["role_scores"].items() if r.lower() != "name"],
                 key=lambda x: x[1], reverse=True
-            )[:3]
+            )[:5]
  
             for role, score in top_roles:
                 color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
