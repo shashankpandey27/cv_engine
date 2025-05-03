@@ -8,7 +8,7 @@ if st.session_state.get("authentication_status") != True:
     st.stop()
  
 # Set wide layout
-st.set_page_config(layout="wide")
+#st.set_page_config(layout="wide")
 with st.spinner("Loading data ..."):
      st.title("🎓 Candidate CV Gallery")
     
@@ -26,16 +26,16 @@ def load_data():
 if "refresh" not in st.session_state:
     st.session_state.refresh = False
  
- 
+# Refresh button
+if st.button("🔄 Refresh Candidates"):
+        st.session_state.refresh = True 
 data = load_data() if not st.session_state.refresh else supabase.table("cvs_table").select("*").execute().data
 st.session_state.refresh = False  # Reset flag
  
 # Sidebar filters
 with st.sidebar:
     #st.markdown("### 🔎 Filter by Role Score")
-    # Refresh button
-    if st.button("🔄 Refresh Candidates"):
-        st.session_state.refresh = True
+
     authenticator = get_authenticator()
     authenticator.logout()
     #selected_role_filter = st.selectbox("Role", ["Any"])
