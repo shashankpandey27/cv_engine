@@ -9,103 +9,104 @@ if st.session_state.get("authentication_status") != True:
  
 # Set wide layout
 st.set_page_config(layout="wide")
-st.title("🎓 Candidate CV Gallery")
-
-
-
-# --- Role Progress HTML Generator ---
-def get_role_progress_html(role_matches):
-    html = ""
-    for match in role_matches:
-        role = match["role"]
-        score = match["score"]
-        color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
-        html += f"""
-<div style="margin-bottom: 8px; text-align: left;">
-<strong style="font-size: 13px;">{role}</strong>
-<div style="background-color: #e0e0e0; border-radius: 8px; overflow: hidden;">
-<div style="width: {score}%; background-color: {color}; padding: 4px 0;
-                                text-align: center; color: white; font-size: 12px;">
-                        {score}%
-</div>
-</div>
-</div>
+with st.spinner("Loading data ..."):
+    st.title("🎓 Candidate CV Gallery")
+    
+    
+    
+    # --- Role Progress HTML Generator ---
+    def get_role_progress_html(role_matches):
+        html = ""
+        for match in role_matches:
+            role = match["role"]
+            score = match["score"]
+            color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
+            html += f"""
+    <div style="margin-bottom: 8px; text-align: left;">
+    <strong style="font-size: 13px;">{role}</strong>
+    <div style="background-color: #e0e0e0; border-radius: 8px; overflow: hidden;">
+    <div style="width: {score}%; background-color: {color}; padding: 4px 0;
+                                    text-align: center; color: white; font-size: 12px;">
+                            {score}%
+    </div>
+    </div>
+    </div>
+            """
+        return html
+    
+    # Fetch data
+    data = supabase.table("cvs_table").select("*").execute().data
+     
+    # Extract unique roles
+    all_roles = sorted({role for row in data for role in row["role_scores"]})
+    selected_role = st.selectbox("🎯 Filter by Role", ["All"] + all_roles)
+    
+    # --- Sidebar filters ---
+    search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
+     
+    
+    # Role score filter UI
+    with st.sidebar:
+        st.markdown("### 🔎 Filter by Role Score")
+        selected_role_filter = st.selectbox("Role", ["Any"] + all_roles)
+        min_score = st.slider("Minimum Score", 0, 100, 0)
+    
+        authenticator = get_authenticator()
+        authenticator.logout() # logout button in sidebar 
+    
+        st.markdown(
         """
-    return html
-
-# Fetch data
-data = supabase.table("cvs_table").select("*").execute().data
- 
-# Extract unique roles
-all_roles = sorted({role for row in data for role in row["role_scores"]})
-selected_role = st.selectbox("🎯 Filter by Role", ["All"] + all_roles)
-
-# --- Sidebar filters ---
-search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
- 
-
-# Role score filter UI
-with st.sidebar:
-    st.markdown("### 🔎 Filter by Role Score")
-    selected_role_filter = st.selectbox("Role", ["Any"] + all_roles)
-    min_score = st.slider("Minimum Score", 0, 100, 0)
-
-    authenticator = get_authenticator()
-    authenticator.logout() # logout button in sidebar 
-
-    st.markdown(
-    """
-    <marquee behavior="scroll" direction="left" style="color:#0070AD; font-size:13px">
-    Disclaimer™: An I&D Middle East tool.
-    </marquee>
-    """,
-    unsafe_allow_html=True)
-
-# Filter candidates
-filtered = []
-for row in data:
-    if selected_role == "All" or selected_role in row["role_scores"]:
-        filtered.append(row)
- 
-if not filtered:
-    st.warning("No matching candidates.")
-else:
-    rows = [filtered[i:i + 5] for i in range(0, len(filtered), 5)]
-    for row in rows:
-        cols = st.columns(len(row))
-        for col, person in zip(cols, row):
-            col.markdown(f"""
-<div style="padding: 10px; border-radius: 8px; background-color: #f9f9f9; 
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1); min-height: 200px;">
-<strong>{person['name']}</strong><br><br>
-            """, unsafe_allow_html=True)
- 
-            # Sort and get top 3 role scores
-            top_roles = sorted(
-                [(r, s) for r, s in person["role_scores"].items() if r.lower() != "name"],
-                key=lambda x: x[1], reverse=True
-            )[:3]
- 
-            for role, score in top_roles:
-                color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
+        <marquee behavior="scroll" direction="left" style="color:#0070AD; font-size:13px">
+        Disclaimer™: An I&D Middle East tool.
+        </marquee>
+        """,
+        unsafe_allow_html=True)
+    
+    # Filter candidates
+    filtered = []
+    for row in data:
+        if selected_role == "All" or selected_role in row["role_scores"]:
+            filtered.append(row)
+     
+    if not filtered:
+        st.warning("No matching candidates.")
+    else:
+        rows = [filtered[i:i + 5] for i in range(0, len(filtered), 5)]
+        for row in rows:
+            cols = st.columns(len(row))
+            for col, person in zip(cols, row):
                 col.markdown(f"""
-<div style="margin-bottom: 4px;">
-<small><strong>{role}</strong></small>
-<div style="background-color:#e0e0e0; border-radius:6px;">
-<div style="width:{score}%; background:{color}; color:white; padding:3px 0; font-size:11px; text-align:center;">
-    {score}%
-</div>
-</div>
-</div>
+    <div style="padding: 10px; border-radius: 8px; background-color: #f9f9f9; 
+                box-shadow: 0 1px 4px rgba(0,0,0,0.1); min-height: 200px;">
+    <strong>{person['name']}</strong><br><br>
                 """, unsafe_allow_html=True)
- 
-            # Ensure the download URL is safe and displayed as a proper link
-            if person.get("download_url"):
-                download_link = person["download_url"]
-                col.markdown(f"""
-<a href="{download_link}" target="_blank" style="text-decoration:none; font-size:13px;">📄 Download CV</a>
-</div>
-                """, unsafe_allow_html=True)
-            else:
-                col.warning("No download link available.")
-        st.markdown("### &nbsp;")
+     
+                # Sort and get top 3 role scores
+                top_roles = sorted(
+                    [(r, s) for r, s in person["role_scores"].items() if r.lower() != "name"],
+                    key=lambda x: x[1], reverse=True
+                )[:3]
+     
+                for role, score in top_roles:
+                    color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
+                    col.markdown(f"""
+    <div style="margin-bottom: 4px;">
+    <small><strong>{role}</strong></small>
+    <div style="background-color:#e0e0e0; border-radius:6px;">
+    <div style="width:{score}%; background:{color}; color:white; padding:3px 0; font-size:11px; text-align:center;">
+        {score}%
+    </div>
+    </div>
+    </div>
+                    """, unsafe_allow_html=True)
+     
+                # Ensure the download URL is safe and displayed as a proper link
+                if person.get("download_url"):
+                    download_link = person["download_url"]
+                    col.markdown(f"""
+    <a href="{download_link}" target="_blank" style="text-decoration:none; font-size:13px;">📄 Download CV</a>
+    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    col.warning("No download link available.")
+            st.markdown("### &nbsp;")
