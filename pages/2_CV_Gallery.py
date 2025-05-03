@@ -35,14 +35,20 @@ with st.spinner("Loading data ..."):
         return html
     
     # Fetch data
-    data = supabase.table("cvs_table").select("*").execute().data
-     
-    # Extract unique roles
-    all_roles = sorted({role for row in data for role in row["role_scores"]})
-    selected_role = st.selectbox("🎯 Filter by Role", ["All"] + all_roles)
+    data = supabase.table("cvs_table").select("*").execute().data 
+
     
-    # --- Sidebar filters ---
-    search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
+
+    col1 , col2 = st.columns([1,2])
+
+    with col1:
+        # Extract unique roles
+        all_roles = sorted({role for row in data for role in row["role_scores"]})
+        selected_role = st.selectbox("🎯 Filter by Role", ["All"] + all_roles)
+    
+    with col2:
+        # Search input
+        search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
      
     
     # Role score filter UI
