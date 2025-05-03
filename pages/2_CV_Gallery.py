@@ -55,6 +55,7 @@ with col2:
 # Sidebar filter for score
 with st.sidebar:
     st.markdown("### 🔎 Filter by Role Score")
+    all_roles = sorted({role for row in data for role in row["role_scores"]})
     selected_role_filter = st.selectbox("🎯 Filter by Display Role", ["Any"] + all_roles)
     min_score = st.slider("Minimum Score", 0, 100, 0)
 
