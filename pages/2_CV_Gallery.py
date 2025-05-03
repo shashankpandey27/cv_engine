@@ -29,7 +29,7 @@ with st.sidebar:
     #selected_role_filter = st.selectbox("Role", ["Any"])
     #min_score = st.slider("Minimum Score", 0, 100, 0)
     # Score slider for filtering
-    min_score = st.slider("🔘 Filter by Minimum Score", 0, 100, 0)
+    #min_score = st.slider("🔘 Filter by Minimum Score", 0, 100, 0)
     st.markdown(
         """
 <marquee behavior="scroll" direction="left" style="color:#0070AD; font-size:13px">
@@ -44,13 +44,18 @@ data = fetch_candidates()
  
 # Extract roles for the main filter
 all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
-selected_role = st.selectbox("🎯 Filter by Role Type", ["All"] + all_roles)
- 
-# Sidebar: Score slider for filtering
-min_score = st.slider("🔘 Filter by Minimum Score", 0, 100, 0)
- 
-# Search query (optional)
-search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
+
+col1 , col2, col3  = st.columns([1,1,1])
+
+with col1: 
+    selected_role = st.selectbox("🎯 Filter by Role Type", ["All"] + all_roles)
+
+with col2: 
+    min_score = st.slider("🔘 Filter by Minimum Score", 0, 100, 0)
+
+with col3: 
+    # Search query (optional)
+    search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
  
 # Filter candidates based on selected role, score from sidebar, and search query
 filtered = []
