@@ -70,7 +70,7 @@ for row in data:
 if not filtered:
     st.warning("No matching candidates.")
 else:
-    rows = [filtered[i:i + 3] for i in range(0, len(filtered), 3)]
+    rows = [filtered[i:i + 5] for i in range(0, len(filtered), 5)]
     for row in rows:
         cols = st.columns(len(row))
         for col, person in zip(cols, row):
