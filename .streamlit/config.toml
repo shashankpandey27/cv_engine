@@ -6,12 +6,11 @@ secondaryBackgroundColor="#F2F4F8"  # Light grey for sidebar/panels
 textColor="#000000"  # Black text for good readability
 font="sans serif"
 
-
 [server]
 headless = true 
 
 [multipage]
 pages = [
-{"file": "1_Resume_Analyser.py", "title" :"Resume Analyser"}, 
-{"file": "2_CV_Gallery.py", "title" :"CV Gallery"}
+{"file": "1_Resume_Analyser.py", "title":"Resume Analyser"}, 
+{"file": "2_CV_Gallery.py", "title":"CV Gallery"}
 ]
