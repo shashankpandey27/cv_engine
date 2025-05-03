@@ -10,7 +10,7 @@ def ask_gemini(prompt):
 
 ROLES = [
     "Data Scientist", "Data Engineer", "Full Stack Developer",
-    "Frontend Developer", "Backend Developer",
+    "Frontend Developer", "Backend Developer", "GenAI Expert"
     "UI/UX", "Business Intelligence", "ML Engineer", "DevOps"
 ]
  
