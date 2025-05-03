@@ -18,10 +18,12 @@ def extract_role_scores(cv_text):
     prompt = f"""
     From this CV text: '''{cv_text}''', score the candidate from 0-100 for the following roles:
  
-    {', '.join(ROLES)}
- 
+    {', '.join(ROLES)} 
+    Also extract Name of the candidate 
+    **Name:** Full name in CAPITAL LETTERS (if available)
     Return JSON like:
     {{
+      "Name" : "XYZ",
       "Data Scientist": 85,
       "Data Engineer": 65,
       ...
