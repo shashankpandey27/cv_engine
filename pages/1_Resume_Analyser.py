@@ -331,7 +331,7 @@ def generate_individual_ppts(cv_data_list, template_path_male, template_path_fem
         # Save the individual PowerPoint file
         prs.save(ppt_filepath)
         ppt_files.append(ppt_filepath)
-        print(f"Generated PowerPoint for {candidate_name} saved at {ppt_filepath}")
+        st.write(f"Generated PowerPoint for {candidate_name} saved at {ppt_filepath}")
  
     # Create a zip file to store all the PowerPoint files
     zip_filename = os.path.join(output_folder, "CVs.zip")
@@ -615,7 +615,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
 
                         # upload all cvs to supabase for the run  
                         if uploaded_cv is not None: # for all 
-                            print("Generating role scores..")
+                            st.write("Generating role scores..")
                             pdf_text = extract_text_from_pdf(uploaded_cv)
                             cleaned_text = clean_text(pdf_text)
                             generate_role_scores_and_upload(uploaded_cv)
@@ -623,7 +623,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                         if uploaded_cv.name in selected_cv_filenames: # for selected or all 
                             pdf_text = extract_text_from_pdf(uploaded_cv)
                             cleaned_text = clean_text(pdf_text)
-                            print("Generating CG ppt..")
+                            st.write("Generating CG ppt..")
                             llm_extraction = extract_information_from_cv(cleaned_text)
                             #print(str(resume) + " analysed !")
                             time.sleep(1)  # Throttle API requests to avoid hitting limits
