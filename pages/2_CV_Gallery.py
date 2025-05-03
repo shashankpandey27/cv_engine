@@ -8,7 +8,7 @@ if st.session_state.get("authentication_status") != True:
     st.stop()
  
 # Set wide layout
-#st.set_page_config(layout="wide")
+st.set_page_config(layout="wide")
 with st.spinner("Loading data ..."):
      st.title("🎓 Candidate CV Gallery")
     
