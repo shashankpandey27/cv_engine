@@ -331,7 +331,7 @@ def generate_individual_ppts(cv_data_list, template_path_male, template_path_fem
         # Save the individual PowerPoint file
         prs.save(ppt_filepath)
         ppt_files.append(ppt_filepath)
-        st.write(f"Generated PowerPoint for {candidate_name} saved at {ppt_filepath}")
+        #st.write(f"Generated PowerPoint for {candidate_name} saved at {ppt_filepath}")
  
     # Create a zip file to store all the PowerPoint files
     zip_filename = os.path.join(output_folder, "CVs.zip")
