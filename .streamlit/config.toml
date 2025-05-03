@@ -1,3 +1,10 @@
+[multipage]
+pages = [
+{"file": "1_Resume_Analyser.py", "title":"Resume Analyser"}, 
+{"file": "2_CV_Gallery.py", "title":"CV Gallery"}
+]
+
+
 [theme]
 base="light"
 primaryColor="#12ABDB"  # Capgemini Primary Blue
