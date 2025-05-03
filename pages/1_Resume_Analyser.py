@@ -456,7 +456,7 @@ def generate_role_scores_and_upload(uploaded_cv):
             supabase.table("cvs_table").insert({
                 "name": role_scores.get("Name","Unknown"),
                 "file_name": filename,
-                "role_scores": role_scores, # {role: score for role, score in role_scores.items() if role != "Name"}
+                "role_scores": role_score_only,
                 "download_url": url
             }).execute()
             st.success("Uploaded and scored successfully!")
