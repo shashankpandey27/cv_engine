@@ -617,16 +617,14 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
 
                         # upload all cvs to supabase for the run  
                         if uploaded_cv is not None: # for all 
-                            #st.write("Generating role scores..")
-                            # pdf_text = extract_text_from_pdf(uploaded_cv)
-                            # cleaned_text = clean_text(pdf_text)
+                            st.write("Generating role scores..")
                             generate_role_scores_and_upload(uploaded_cv)
 
                     for uploaded_cv in uploaded_cvs:    
                         if uploaded_cv.name in selected_cv_filenames: # for selected or all 
                             pdf_text = extract_text_from_pdf(uploaded_cv)
                             cleaned_text = clean_text(pdf_text)
-                            st.write("Generating CG ppt..")
+                            
                             llm_extraction = extract_information_from_cv(cleaned_text)
                             #print(str(resume) + " analysed !")
                             time.sleep(1)  # Throttle API requests to avoid hitting limits
@@ -637,6 +635,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                     os.makedirs(output_folder, exist_ok=True)
                 
                     # Generate individual PowerPoint presentations and zip them
+                    st.write("Generating CG ppt..")
                     zip_file_path = generate_individual_ppts(cv_data_list, template_male_path, template_female_path, output_folder)
                     # Provide download link for the zip file
                     col1, col2, col3 = st.columns([2, 2, 2])
