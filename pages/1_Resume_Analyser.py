@@ -613,15 +613,15 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                     cv_data_list = []
                     selected_cv_filenames = selected_rows_df['Resume'].tolist() if not selected_rows_df.empty else edited_df['Resume'].tolist()
                     # Process each resume, extract information, and store the structured data
-                    for uploaded_cv in uploaded_cvs:
+                    # for uploaded_cv in uploaded_cvs:
 
-                        # upload all cvs to supabase for the run  
-                        if uploaded_cv is not None: # for all 
-                            st.write("Generating role scores..")
-                            try:
-                                generate_role_scores_and_upload(uploaded_cv)
-                            except Exception as e:
-                                pass 
+                    #     # upload all cvs to supabase for the run  
+                    #     if uploaded_cv is not None: # for all 
+                    #         st.write("Generating role scores..")
+                    #         try:
+                    #             generate_role_scores_and_upload(uploaded_cv)
+                    #         except Exception as e:
+                    #             pass 
                                 
                     for uploaded_cv in uploaded_cvs:    
                         if uploaded_cv.name in selected_cv_filenames: # for selected or all 
