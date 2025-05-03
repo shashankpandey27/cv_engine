@@ -23,7 +23,7 @@ if st.button("🔄 Refresh Data"):
  
 # Sidebar filters
 with st.sidebar:
-    st.markdown("### 🔎 Filter by Role Score")
+    #st.markdown("### 🔎 Filter by Role Score")
     authenticator = get_authenticator()
     authenticator.logout()
     #selected_role_filter = st.selectbox("Role", ["Any"])
@@ -42,41 +42,34 @@ with st.sidebar:
 # Load data once
 data = fetch_candidates()
  
-# Extract roles for the main filter
+# Extract all unique role types
 all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
+ 
+# Main role filter dropdown
 selected_role = st.selectbox("🎯 Filter by Role Type", ["All"] + all_roles)
  
-# Sidebar: Score slider for filtering
-min_score = st.slider("🔘 Filter by Minimum Score", 0, 100, 0)
- 
-# Search query (optional)
+# Search by candidate name
 search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
  
-# Filter candidates based on selected role, score from sidebar, and search query
+# Filtering logic
 filtered = []
 for row in data:
     name_match = search_query in row["name"].lower()
- 
-    # Check if the role matches the selected role (if "All", we don't filter by role)
     role_match = selected_role == "All" or selected_role in row["role_scores"]
-    # Check if any of the role scores meets the minimum score
-    score_match = any(score >= min_score for score in row["role_scores"].values())
-    if name_match and role_match and score_match:
+    if name_match and role_match:
         filtered.append(row)
  
-# Display a warning if no candidates match the filter
+# Display warning if no results
 if not filtered:
     st.warning("No matching candidates.")
 else:
-    # Break the filtered candidates into rows of 5
+    # Arrange tiles: 5 per row
     rows = [filtered[i:i + 5] for i in range(0, len(filtered), 5)]
  
-    # Iterate over each row of candidates
     for row in rows:
-        cols = st.columns(len(row))  # Dynamically create columns based on the number of candidates in the row
+        cols = st.columns(len(row))
         for col, person in zip(cols, row):
             with col:
-                # Create HTML for each candidate card
                 html = f"""
 <div style="padding: 12px; border-radius: 10px; background-color: #f9f9f9;
                              box-shadow: 0 2px 6px rgba(0,0,0,0.1); min-height: 240px;
@@ -86,12 +79,11 @@ else:
 <strong style="font-size: 14px;">{person['name']}</strong><br><br>
                 """
  
-                # Get the top 5 roles based on score
                 top_roles = sorted(
                     [(r, s) for r, s in person["role_scores"].items()],
                     key=lambda x: x[1], reverse=True
                 )[:5]
-                # Add the role scores to the HTML
+ 
                 for role, score in top_roles:
                     color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
                     html += f"""
@@ -105,7 +97,7 @@ else:
 </div>
 </div>
                     """
-                # Add the download link if available
+ 
                 if person.get("download_url"):
                     html += f"""
 <a href="{person['download_url']}" target="_blank"
