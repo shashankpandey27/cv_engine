@@ -24,6 +24,7 @@ with st.sidebar:
     #st.markdown("### 🔎 Filter by Role Score")
     # Refresh button
     if st.button("🔄 Refresh Data"):
+        data = fetch_candidates()
         st.rerun()
     authenticator = get_authenticator()
     authenticator.logout()
