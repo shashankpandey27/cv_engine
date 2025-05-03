@@ -60,7 +60,7 @@ for row in data:
 if not filtered:
     st.warning("No matching candidates.")
 else:
-    rows = [filtered[i:i + 3] for i in range(0, len(filtered), 3)]
+    rows = [filtered[i:i + 5] for i in range(0, len(filtered), 5)]
     for row in rows:
         cols = st.columns(len(row))
         for col, person in zip(cols, row):
@@ -79,7 +79,7 @@ else:
                 top_roles = sorted(
                     [(r, s) for r, s in person["role_scores"].items()],
                     key=lambda x: x[1], reverse=True
-                )[:3]
+                )[:5]
                  
                 for role, score in top_roles:
                     color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
