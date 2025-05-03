@@ -17,13 +17,14 @@ with st.spinner("Loading data ..."):
 def fetch_candidates():
     return supabase.table("cvs_table").select("*").execute().data
  
-# Refresh button
-if st.button("🔄 Refresh Data"):
-    st.rerun()
+
  
 # Sidebar filters
 with st.sidebar:
     #st.markdown("### 🔎 Filter by Role Score")
+    # Refresh button
+    if st.button("🔄 Refresh Data"):
+        st.rerun()
     authenticator = get_authenticator()
     authenticator.logout()
     #selected_role_filter = st.selectbox("Role", ["Any"])
@@ -44,12 +45,15 @@ data = fetch_candidates()
  
 # Extract all unique role types
 all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
- 
-# Main role filter dropdown
-selected_role = st.selectbox("🎯 Filter by Role Type", ["All"] + all_roles)
- 
-# Search by candidate name
-search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
+
+col1 , col2 = st.columns([1,2])
+
+with col1:
+    # Main role filter dropdown
+    selected_role = st.selectbox("🎯 Filter by Role Type", ["All"] + all_roles)
+with col1: 
+    # Search by candidate name
+    search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
  
 # Filtering logic
 filtered = []
