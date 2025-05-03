@@ -30,7 +30,7 @@ if st.session_state.get("authentication_status") != True:
     st.warning("Please login to access this page.")
     st.stop()
 
-
+st.set_page_config(layout="center")
 
 # Inject logo and favicon
 def add_favicon():
