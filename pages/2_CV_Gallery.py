@@ -26,7 +26,7 @@ with st.sidebar:
     st.markdown("### 🔎 Filter by Role Score")
     authenticator = get_authenticator()
     authenticator.logout()
-    selected_role_filter = st.selectbox("Role", ["Any"])
+    #selected_role_filter = st.selectbox("Role", ["Any"])
     min_score = st.slider("Minimum Score", 0, 100, 0)
     st.markdown(
         """
@@ -40,21 +40,19 @@ with st.sidebar:
 # Load data once
 data = fetch_candidates()
  
-# Extract roles
-all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
-selected_role = st.selectbox("🎯 Filter by Role", ["All"] + all_roles)
+# Score slider for filtering
+min_score = st.slider("🔘 Filter by Minimum Score", 0, 100, 0)
+ 
+# Search query
 search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
  
-# Filter candidates based on search and role
+# Filter candidates based on search and score
 filtered = []
 for row in data:
     name_match = search_query in row["name"].lower()
-    role_match = selected_role == "All" or selected_role in row["role_scores"]
-    sidebar_role = selected_role == "Any" or selected_role in row["role_scores"]
-    sidebar_score = True
-    if selected_role != "Any":
-        sidebar_score = row["role_scores"].get(selected_role, 0) >= min_score
-    if name_match and role_match and sidebar_role and sidebar_score:
+    # Ensure role scores meet the minimum score criteria
+    role_match = any(score >= min_score for score in row["role_scores"].values())
+    if name_match and role_match:
         filtered.append(row)
  
 # Display a warning if no candidates match the filter
