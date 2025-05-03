@@ -61,7 +61,7 @@ with st.sidebar:
 
     if st.button("🔄 Refresh CV Data"):
         load_cv_data.clear()  # Clear the cache
-        st.experimental_rerun()  # Force rerun to reload fresh data
+        st.rerun()  # Force rerun to reload fresh data
    
     
     authenticator = get_authenticator()
