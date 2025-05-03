@@ -1,7 +1,7 @@
 [multipage]
 pages = [
-{"file": "1_Resume_Analyser.py", "title":"Resume Analyser"}, 
-{"file": "2_CV_Gallery.py", "title":"CV Gallery"}
+    {"file": "1_Resume_Analyser.py", "title":"Resume Analyser"}, 
+    {"file": "2_CV_Gallery.py", "title":"CV Gallery"}
 ]
 
 
