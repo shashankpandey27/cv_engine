@@ -46,12 +46,13 @@ data = fetch_candidates()
 all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
 selected_role = st.selectbox("🎯 Filter by Role Type", ["All"] + all_roles)
  
-
+# Sidebar: Score slider for filtering
+min_score = st.slider("🔘 Filter by Minimum Score", 0, 100, 0)
  
 # Search query (optional)
 search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
  
-# Filter candidates based on selected role, score, and search query
+# Filter candidates based on selected role, score from sidebar, and search query
 filtered = []
 for row in data:
     name_match = search_query in row["name"].lower()
