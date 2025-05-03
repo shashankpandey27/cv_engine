@@ -428,37 +428,37 @@ with st.sidebar:
 genai.configure(api_key=user_api_key)
 gemini_model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
 
-def generate_role_scores_and_upload(uploaded_cv): 
-    #cv_bytes = uploaded_cv.read()
-    pdf_text = extract_text_from_pdf(uploaded_cv)
-    cleaned_text = clean_text(pdf_text)
-    #cv_text = cv_bytes.decode("utf-8", errors="ignore")  # or use pdfminer for actual text
-    role_scores = extract_role_scores(cleaned_text)
+# def generate_role_scores_and_upload(uploaded_cv): 
+#     #cv_bytes = uploaded_cv.read()
+#     pdf_text = extract_text_from_pdf(uploaded_cv)
+#     cleaned_text = clean_text(pdf_text)
+#     #cv_text = cv_bytes.decode("utf-8", errors="ignore")  # or use pdfminer for actual text
+#     role_scores = extract_role_scores(cleaned_text)
  
-    if role_scores:
-        best_role = max(role_scores, key=role_scores.get)
-        filename = uploaded_cv.name.replace(" ", "_")
-        public_path = f"{best_role}/{uuid.uuid4()}_{filename}"
+#     if role_scores:
+#         best_role = max(role_scores, key=role_scores.get)
+#         filename = uploaded_cv.name.replace(" ", "_")
+#         public_path = f"{best_role}/{uuid.uuid4()}_{filename}"
  
-        # Check duplicate
-        existing = supabase.table("cvs_table").select("*").eq("file_name", filename).execute()
-        if existing.data:
-            st.warning("This CV already exists.")
-        else:
-            # Upload file
-            supabase.storage.from_(BUCKET_NAME).upload(public_path, uploaded_cv.read())
+#         # Check duplicate
+#         existing = supabase.table("cvs_table").select("*").eq("file_name", filename).execute()
+#         if existing.data:
+#             st.warning("This CV already exists.")
+#         else:
+#             # Upload file
+#             supabase.storage.from_(BUCKET_NAME).upload(public_path, uploaded_cv.read())
  
-            # Get public URL
-            url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
+#             # Get public URL
+#             url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
  
-            # Save metadata
-            supabase.table("cvs_table").insert({
-                "name": role_scores.get("Name","Unknown"),
-                "file_name": filename,
-                "role_scores": role_scores, # {role: score for role, score in role_scores.items() if role != "Name"}
-                "download_url": url
-            }).execute()
-            st.success("Uploaded and scored successfully!")
+#             # Save metadata
+#             supabase.table("cvs_table").insert({
+#                 "name": role_scores.get("Name","Unknown"),
+#                 "file_name": filename,
+#                 "role_scores": role_scores, # {role: score for role, score in role_scores.items() if role != "Name"}
+#                 "download_url": url
+#             }).execute()
+#             st.success("Uploaded and scored successfully!")
             
 def generate_role_scores_and_upload(uploaded_cv): 
     try:
