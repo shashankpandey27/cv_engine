@@ -504,13 +504,13 @@ with col3:
         st.session_state.submit_pressed = False
         st.session_state.cg_cv_button_pressed = False
  
-with col2:
-    cg_cv_button = st.button("Generate Capgemini CVs", type="primary")
-    if cg_cv_button:
-        if st.session_state.submit_pressed:
-            st.session_state.cg_cv_button_pressed = True
-        else:
-            st.warning("Please press the **Submit** buttom first before generating CG format CVs")
+# with col2:
+#     cg_cv_button = st.button("Generate Capgemini CVs", type="primary")
+#     if cg_cv_button:
+#         if st.session_state.submit_pressed:
+#             st.session_state.cg_cv_button_pressed = True
+#         else:
+#             st.warning("Please press the **Submit** buttom first before generating CG format CVs")
 
 st.markdown("<br>", unsafe_allow_html = True)       
 
