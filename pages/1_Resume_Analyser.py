@@ -574,14 +574,14 @@ if st.session_state.submit_pressed and not st.session_state.get('cv_processing_d
             scores_df,
             use_container_width=True,
             hide_index=True,
-            key = "editable_data_editor",
-            column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
+            key = "editable_data_editor"
+            #column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
         )
         st.session_state['edited_df'] = edited_df
  
-        selected_rows_df = edited_df[edited_df['Selected'] == True]
-        download_df = selected_rows_df.drop(columns=['Selected']) if not selected_rows_df.empty else edited_df.drop(columns=['Selected'])
- 
+        #selected_rows_df = edited_df
+        #download_df = selected_rows_df.drop(columns=['Selected']) if not selected_rows_df.empty else edited_df.drop(columns=['Selected'])
+        download_df = edited_df
         # Prepare CSV & Excel
         csv = download_df.to_csv(index=False).encode('utf-8')
         excel_buffer = io.BytesIO()
@@ -592,7 +592,7 @@ if st.session_state.submit_pressed and not st.session_state.get('cv_processing_d
         # Prepare ZIP of selected CVs
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-            selected_cv_filenames = selected_rows_df['Resume'].tolist() if not selected_rows_df.empty else edited_df['Resume'].tolist()
+            selected_cv_filenames = edited_df['Resume'].tolist()
             for uploaded_cv in uploaded_cvs:
                 if uploaded_cv.name in selected_cv_filenames:
                     zip_file.writestr(uploaded_cv.name, uploaded_cv.getvalue())
