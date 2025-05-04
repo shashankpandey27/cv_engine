@@ -524,20 +524,32 @@ if "uploaded_cvs" in st.session_state and uploaded_cvs is None :
     for key in ["scores_df"]:
         st.session_state.pop(key,None)                                
 
-
-col1 , col2, col3  = st.columns([2,1,.5])
-with col1:
-    submit_button = st.button("Submit", type = "primary")
-with col3:
-    reset_button = st.button("Reset All", type = "primary")
-with col2:
-    cg_cv_button = st.button("Generate Capgemini CVs", type = "primary")
-
-st.markdown("<br>", unsafe_allow_html = True)       
-
+# Initialize session states if not already set
 if "submit_pressed" not in st.session_state:
     st.session_state.submit_pressed = False
+if "cg_cv_clicked" not in st.session_state:
+    st.session_state.cg_cv_clicked = False
+    
+# Button definitions 
+col1, col2, col3 = st.columns([2, 1, 0.5])
+ 
+with col1:
+    submit_button = st.button("Submit", type="primary")
+    if submit_button:
+        st.session_state.submit_pressed = True
+ 
+with col3:
+    reset_button = st.button("Reset All", type="primary")
+    if reset_button:
+        st.session_state.submit_pressed = False
+        st.session_state.cg_cv_button_pressed = False
+ 
+with col2:
+    cg_cv_button = st.button("Generate Capgemini CVs", type="primary")
+    if cg_cv_button:
+        st.session_state.cg_cv_button_pressed = True
 
+st.markdown("<br>", unsafe_allow_html = True)       
 
 
 if reset_button:
@@ -708,8 +720,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
     # else:
     #     st.warning("👉 Please press the **Submit** button first before generating CVs!")   
 
-    if st.session_state.submit_pressed:
-        if cg_cv_button:
+    if st.session_state.submit_pressed and st.session_state.cg_cv_clicked:
      
             templates_folder = "template"
             template_male_path = os.path.join(templates_folder, "cg_template_male.pptx")
