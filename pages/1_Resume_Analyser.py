@@ -568,20 +568,23 @@ if submit_button:
 if st.session_state.submit_pressed and not st.session_state.get('cv_processing_done'):
     if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None:
         scores_df = st.session_state['scores_df'].round(4)
-        if 'Selected' not in scores_df.columns:
-            scores_df['Selected'] = False
-        edited_df = st.data_editor(
-            scores_df,
-            use_container_width=True,
-            hide_index=True,
-            key = "editable_data_editor"
-            #column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
-        )
-        st.session_state['edited_df'] = edited_df
+        # if 'Selected' not in scores_df.columns:
+        #     scores_df['Selected'] = False
+            
+        # edited_df = st.data_editor(
+        #     scores_df,
+        #     use_container_width=True,
+        #     hide_index=True,
+        #     key = "editable_data_editor"
+        #     #column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
+        # )
+
+        # edited_df = st.dataframe(scores_df, use_container_width=True,hide_index=True)
+        # st.session_state['edited_df'] = edited_df
  
         #selected_rows_df = edited_df
         #download_df = selected_rows_df.drop(columns=['Selected']) if not selected_rows_df.empty else edited_df.drop(columns=['Selected'])
-        download_df = edited_df
+        download_df = scores_df
         # Prepare CSV & Excel
         csv = download_df.to_csv(index=False).encode('utf-8')
         excel_buffer = io.BytesIO()
@@ -641,17 +644,17 @@ if st.session_state.submit_pressed and not st.session_state.get('cv_processing_d
  
 # Render Data Table and Download buttons if processing is done
 if st.session_state.get('cv_processing_done'):
-    edited_df = st.session_state.get('edited_df')
-    if edited_df is not None:
-        st.data_editor(
-            edited_df,
-            use_container_width=True,
-            hide_index=True,
-            key = "data_editor",
-            #column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
-            #disabled=True
-        )
- 
+    scores_df = st.session_state.get('scores_df')
+    # if edited_df is not None:
+    #     st.data_editor(
+    #         edited_df,
+    #         use_container_width=True,
+    #         hide_index=True,
+    #         key = "data_editor",
+    #         #column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
+    #         #disabled=True
+    #     )
+    st.dataframe(scores_df, use_container_width=True,hide_index=True)
     col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
     with col1:
         st.download_button("⬇️Scores (CSV)", data=st.session_state['csv'], file_name='matching_scores.csv', mime='text/csv')
