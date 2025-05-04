@@ -529,6 +529,8 @@ if "submit_pressed" not in st.session_state:
     st.session_state.submit_pressed = False
 if "cg_cv_button_pressed" not in st.session_state:
     st.session_state.cg_cv_button_pressed = False
+if "cv_data_list" not in st.session_state:
+    st.session_state.cv_data_list =[]
     
 # Button definitions 
 col1, col2, col3 = st.columns([2, 1, 0.5])
@@ -562,7 +564,8 @@ if reset_button:
     # clear file uploaders by changing keys 
         
     st.session_state["jd_upload_key"] = str(uuid.uuid4())
-    st.session_state["cv_upload_key"] = str(uuid.uuid4())    
+    st.session_state["cv_upload_key"] = str(uuid.uuid4())
+    st.session_state.cv_data_list =[]
     st.rerun()       
 
 if submit_button:
@@ -724,7 +727,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
     #     st.warning("👉 Please press the **Submit** button first before generating CVs!")   
 
     if st.session_state.submit_pressed and st.session_state.cg_cv_button_pressed:
-     
+             
             templates_folder = "template"
             template_male_path = os.path.join(templates_folder, "cg_template_male.pptx")
             template_female_path = os.path.join(templates_folder, "cg_template_female.pptx")
@@ -747,7 +750,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
 
      
                     # Second pass: generate CG slides only for selected CVs
-                    cv_data_list = []
+                    
                     for uploaded_cv in uploaded_cvs:
                         if uploaded_cv.name in selected_cv_filenames:
                             try:
@@ -757,7 +760,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                                 llm_extraction = extract_information_from_cv(cleaned_text)
      
                                 if llm_extraction:
-                                    cv_data_list.append(llm_extraction)
+                                    st.session_state.cv_data_list.append(llm_extraction)
                                 else:
                                     st.warning(f"No data extracted from {uploaded_cv.name}")
      
@@ -765,7 +768,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                             except Exception as e:
                                 st.error(f"❌ Error processing {uploaded_cv.name}: {str(e)}")
      
-                    if not cv_data_list:
+                    if not st.session_state.cv_data_list:
                         st.error("🚫 No CVs matched or were extracted properly. Please check your input or selections.")
                     else:
                         output_folder = "/tmp/generated_ppts"
@@ -773,7 +776,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
      
                         st.write("📦 Generating CG PowerPoint files...")
                         try:
-                            zip_file_path = generate_individual_ppts(cv_data_list, template_male_path, template_female_path, output_folder)
+                            zip_file_path = generate_individual_ppts(st.session_state.cv_data_list, template_male_path, template_female_path, output_folder)
                             col1, col2, col3 = st.columns([2, 2, 2])
                             with col2:
                                 with open(zip_file_path, "rb") as f:
