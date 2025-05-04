@@ -527,8 +527,8 @@ if "uploaded_cvs" in st.session_state and uploaded_cvs is None :
 # Initialize session states if not already set
 if "submit_pressed" not in st.session_state:
     st.session_state.submit_pressed = False
-if "cg_cv_clicked" not in st.session_state:
-    st.session_state.cg_cv_clicked = False
+if "cg_cv_button_pressed" not in st.session_state:
+    st.session_state.cg_cv_button_pressed = False
     
 # Button definitions 
 col1, col2, col3 = st.columns([2, 1, 0.5])
@@ -723,7 +723,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
     # else:
     #     st.warning("👉 Please press the **Submit** button first before generating CVs!")   
 
-    if st.session_state.submit_pressed and st.session_state.cg_cv_clicked:
+    if st.session_state.submit_pressed and st.session_state.cg_cv_button_pressed:
      
             templates_folder = "template"
             template_male_path = os.path.join(templates_folder, "cg_template_male.pptx")
