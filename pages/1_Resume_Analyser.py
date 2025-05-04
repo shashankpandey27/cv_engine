@@ -748,12 +748,8 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
      
                     st.write("Selected filenames for CG generation:", selected_cv_filenames)
 
-     
-                    if not st.session_state.cv_data_list:
-                        st.error("🚫 No CVs matched or were extracted properly. Please check your input or selections.")
-                    else:
-                        # Second pass: generate CG slides only for selected CVs
-                        for uploaded_cv in uploaded_cvs:
+                                            # Second pass: generate CG slides only for selected CVs
+                    for uploaded_cv in uploaded_cvs:
                             if uploaded_cv.name in selected_cv_filenames:
                                 try:
                                     st.write(f"🧠 Extracting information from: {uploaded_cv.name}")
@@ -769,6 +765,11 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                                     time.sleep(1)  # To avoid API limits
                                 except Exception as e:
                                     st.error(f"❌ Error processing {uploaded_cv.name}: {str(e)}")
+     
+                    if not st.session_state.cv_data_list:
+                        st.error("🚫 No CVs matched or were extracted properly. Please check your input or selections.")
+                    else:
+
                         output_folder = "/tmp/generated_ppts"
                         os.makedirs(output_folder, exist_ok=True)
      
