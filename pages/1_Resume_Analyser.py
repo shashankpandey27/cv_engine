@@ -704,6 +704,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                 file_name="CVs_CG_Format.zip",
                 mime="application/zip"
             )
+    st.session_state.submit_pressed = False   
 
 
         
