@@ -565,19 +565,18 @@ if submit_button:
 
 
 # Main processing block
-if st.session_state.submit_pressed and not st.session_state.cv_processing_done:
+if st.session_state.submit_pressed:
     if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None:
         scores_df = st.session_state['scores_df'].round(4)
- 
         if 'Selected' not in scores_df.columns:
             scores_df['Selected'] = False
- 
         edited_df = st.data_editor(
             scores_df,
             use_container_width=True,
             hide_index=True,
             column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
         )
+        st.session_state['edited_df'] = edited_df
  
         selected_rows_df = edited_df[edited_df['Selected'] == True]
         download_df = selected_rows_df.drop(columns=['Selected']) if not selected_rows_df.empty else edited_df.drop(columns=['Selected'])
@@ -640,7 +639,7 @@ if st.session_state.submit_pressed and not st.session_state.cv_processing_done:
         st.session_state.cv_processing_done = True
  
 # Download buttons after processing
-if st.session_state.cv_processing_done:
+if st.session_state.get('cv_processing_done'):
     col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
     with col1:
         st.download_button("⬇️Scores (CSV)", data=st.session_state['csv'], file_name='matching_scores.csv', mime='text/csv')
@@ -650,8 +649,9 @@ if st.session_state.cv_processing_done:
     with col3:
         st.download_button("⬇️CVs (ZIP)", data=st.session_state['cv_zip'], file_name='selected_cvs.zip', mime='application/zip')
     with col4:
-        with open(st.session_state.cg_zip_file_path, "rb") as f:
-            st.download_button("⬇️CVs (CG Format)", data=f, file_name="CVs_CG_Format.zip", mime="application/zip")
+        if 'cg_zip_file_path' in st.session_state and os.path.exists(st.session_state.cg_zip_file_path):
+            with open(st.session_state.cg_zip_file_path, "rb") as f:
+                st.download_button("⬇️CVs (CG Format)", data=f, file_name="CVs_CG_Format.zip", mime="application/zip")
     
 
 
