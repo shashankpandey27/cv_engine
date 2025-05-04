@@ -77,7 +77,7 @@ for row in data:
     main_role, main_score = max(role_scores.items(), key=lambda x: x[1])
  
     # Apply role filter only to main role
-    if selected_role_filter != "All" and selected_role_filter != main_role:
+    if selected_role != "All" and selected_role != main_role:
         continue
     if main_score < min_score:
         continue
