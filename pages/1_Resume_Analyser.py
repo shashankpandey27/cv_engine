@@ -636,7 +636,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
     else:
         with st.spinner("🎉 Baking the CVs in our awesome CG template!"):
             
-
+            
             # Build the list of selected filenames
             if not selected_rows_df.empty:
                 selected_cv_filenames = selected_rows_df['Resume'].tolist()
@@ -647,6 +647,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
 
             st.write("Selected filenames for CG generation:", selected_cv_filenames)
             # Second pass: generate CG slides only for selected CVs
+            cv_data_list=[]
             for uploaded_cv in uploaded_cvs:
                     if uploaded_cv.name in selected_cv_filenames:
                         try:
@@ -654,8 +655,8 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                             pdf_text = extract_text_from_pdf(uploaded_cv)
                             cleaned_text = clean_text(pdf_text)
                             llm_extraction = extract_information_from_cv(cleaned_text)
-
                             time.sleep(1)  # To avoid API limits
+                            cv_data_list.append(llm_extraction)
                         except Exception as e:
                             st.error(f"❌ Error processing {uploaded_cv.name}: {str(e)}")
 
