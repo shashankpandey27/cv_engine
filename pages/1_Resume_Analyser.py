@@ -481,50 +481,44 @@ if "uploaded_cvs" in st.session_state and uploaded_cvs is None :
     del st.session_state["uploaded_cvs"]
     for key in ["scores_df"]:
         st.session_state.pop(key,None)                                
+ 
+  
 
-# Initialize session states if not already set
+# Initialize session state variables
 if "submit_pressed" not in st.session_state:
     st.session_state.submit_pressed = False
-if "cg_cv_button_pressed" not in st.session_state:
-    st.session_state.cg_cv_button_pressed = False
-# if "cv_data_list" not in st.session_state:
-#     st.session_state.cv_data_list =[]
-    
-# Button definitions 
-col1, col2, col3 = st.columns([2, 1, 0.5])
+if "cv_processing_done" not in st.session_state:
+    st.session_state.cv_processing_done = False
+if "cg_cv_data_list" not in st.session_state:
+    st.session_state.cg_cv_data_list = []
+if "cg_zip_file_path" not in st.session_state:
+    st.session_state.cg_zip_file_path = None
+if "jd_upload_key" not in st.session_state:
+    st.session_state["jd_upload_key"] = str(uuid.uuid4())
+if "cv_upload_key" not in st.session_state:
+    st.session_state["cv_upload_key"] = str(uuid.uuid4())
  
+# UI buttons
+col1, col2, col3 = st.columns([2, 1, 0.5])
 with col1:
     submit_button = st.button("Submit", type="primary")
     if submit_button:
-        st.session_state.submit_pressed = True # persist submit state 
+        st.session_state.submit_pressed = True
+        st.session_state.cv_processing_done = False  # reset if re-submitting
  
 with col3:
     reset_button = st.button("Reset All", type="primary")
     if reset_button:
         st.session_state.submit_pressed = False
-        st.session_state.cg_cv_button_pressed = False
+        st.session_state.cv_processing_done = False
+        for key in ["scores_df", "uploaded_weights", "cg_zip_file_path", "cg_cv_data_list"]:
+            st.session_state.pop(key, None)
+        st.session_state["jd_upload_key"] = str(uuid.uuid4())
+        st.session_state["cv_upload_key"] = str(uuid.uuid4())
+        st.session_state.cv_data_list = []
+        st.rerun()
  
-# with col2:
-#     cg_cv_button = st.button("Generate Capgemini CVs", type="primary")
-#     if cg_cv_button:
-#         if st.session_state.submit_pressed:
-#             st.session_state.cg_cv_button_pressed = True
-#         else:
-#             st.warning("Please press the **Submit** buttom first before generating CG format CVs")
-
-st.markdown("<br>", unsafe_allow_html = True)       
-
-
-if reset_button:
-    for key in ["scores_df","uploaded_weights"]:
-        st.session_state.pop(key,None)
-
-    # clear file uploaders by changing keys 
-        
-    st.session_state["jd_upload_key"] = str(uuid.uuid4())
-    st.session_state["cv_upload_key"] = str(uuid.uuid4())
-    st.session_state.cv_data_list =[]
-    st.rerun()       
+st.markdown("<br>", unsafe_allow_html=True)
 
 if submit_button:
     # Check missing inputs and give proper warnings
@@ -579,132 +573,96 @@ if submit_button:
                         st.error(f"❌ Failed to upload or score {uploaded_cv.name}: {str(e)}")
                         continue
 
-# After Submit button is pressed 
-if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None:
-    scores_df = st.session_state['scores_df'].round(4)
 
-    # Make sure there's a Selected column
-    if 'Selected' not in scores_df.columns:
-        scores_df['Selected'] = False
-
-    # Editable table
-    edited_df = st.data_editor(
-        scores_df,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Selected": st.column_config.CheckboxColumn(required=False)
-        }
-    )
-
-    # Get selected rows
-    selected_rows_df = edited_df[edited_df['Selected'] == True]
-
-    # Download either selected or all
-    if not selected_rows_df.empty:
-        download_df = selected_rows_df.drop(columns=['Selected'])
-    else:
-        download_df = edited_df.drop(columns=['Selected'])
-
-    # Prepare CSV and Excel
-    csv = download_df.to_csv(index=False).encode('utf-8')
-
-    excel_buffer = io.BytesIO()
-    with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
-        download_df.to_excel(writer, index=False, sheet_name='Matching Scores')
-    excel_data = excel_buffer.getvalue()
-
-    # Prepare ZIP of selected CVs
-    zip_buffer = io.BytesIO()
-    with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-        # Collect CV filenames to include
-        selected_cv_filenames = selected_rows_df['Resume'].tolist() if not selected_rows_df.empty else edited_df['Resume'].tolist()
-
-        for uploaded_cv in uploaded_cvs:
-            if uploaded_cv.name in selected_cv_filenames:
-                # Add the file to the zip
-                zip_file.writestr(uploaded_cv.name, uploaded_cv.getvalue())
-    zip_buffer.seek(0)
-
-    # generate CG ppts         
-    templates_folder = "template"
-    template_male_path = os.path.join(templates_folder, "cg_template_male.pptx")
-    template_female_path = os.path.join(templates_folder, "cg_template_female.pptx")
-
-    if not os.path.exists(template_male_path) or not os.path.exists(template_female_path):
-        st.error("Template files not found. Ensure both 'cg_template_male.pptx' and 'cg_template_female.pptx' exist.")
-    else:
-        with st.spinner("🎉 Baking the CVs in our awesome CG template!"):
-            
-            
-            # Build the list of selected filenames
-            if not selected_rows_df.empty:
-                selected_cv_filenames = selected_rows_df['Resume'].tolist()
-            elif not edited_df.empty:
-                selected_cv_filenames = edited_df['Resume'].tolist()
-            else:
-                selected_cv_filenames = [cv.name for cv in uploaded_cvs]
-
-            st.write("Selected filenames for CG generation:", selected_cv_filenames)
-            # Second pass: generate CG slides only for selected CVs
-            cv_data_list=[]
+# Main processing block
+if st.session_state.submit_pressed and not st.session_state.cv_processing_done:
+    if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None:
+        scores_df = st.session_state['scores_df'].round(4)
+ 
+        if 'Selected' not in scores_df.columns:
+            scores_df['Selected'] = False
+ 
+        edited_df = st.data_editor(
+            scores_df,
+            use_container_width=True,
+            hide_index=True,
+            column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
+        )
+ 
+        selected_rows_df = edited_df[edited_df['Selected'] == True]
+        download_df = selected_rows_df.drop(columns=['Selected']) if not selected_rows_df.empty else edited_df.drop(columns=['Selected'])
+ 
+        # Prepare CSV & Excel
+        csv = download_df.to_csv(index=False).encode('utf-8')
+        excel_buffer = io.BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
+            download_df.to_excel(writer, index=False, sheet_name='Matching Scores')
+        excel_data = excel_buffer.getvalue()
+ 
+        # Prepare ZIP of selected CVs
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+            selected_cv_filenames = selected_rows_df['Resume'].tolist() if not selected_rows_df.empty else edited_df['Resume'].tolist()
             for uploaded_cv in uploaded_cvs:
+                if uploaded_cv.name in selected_cv_filenames:
+                    zip_file.writestr(uploaded_cv.name, uploaded_cv.getvalue())
+        zip_buffer.seek(0)
+ 
+        # Load PPT templates
+        templates_folder = "template"
+        template_male_path = os.path.join(templates_folder, "cg_template_male.pptx")
+        template_female_path = os.path.join(templates_folder, "cg_template_female.pptx")
+ 
+        if not os.path.exists(template_male_path) or not os.path.exists(template_female_path):
+            st.error("Template files not found.")
+        else:
+            with st.spinner("🎉 Baking the CVs in our awesome CG template!"):
+                st.session_state.cg_cv_data_list = []
+                for uploaded_cv in uploaded_cvs:
                     if uploaded_cv.name in selected_cv_filenames:
                         try:
-                            st.write(f"🧠 Extracting information from: {uploaded_cv.name}")
+                            st.write(f"🧠 Extracting: {uploaded_cv.name}")
                             pdf_text = extract_text_from_pdf(uploaded_cv)
                             cleaned_text = clean_text(pdf_text)
                             llm_extraction = extract_information_from_cv(cleaned_text)
-                            time.sleep(1)  # To avoid API limits
-                            cv_data_list.append(llm_extraction)
+                            time.sleep(1)  # rate limit
+                            st.session_state.cg_cv_data_list.append(llm_extraction)
                         except Exception as e:
                             st.error(f"❌ Error processing {uploaded_cv.name}: {str(e)}")
-
-            output_folder = "/tmp/generated_ppts"
-            os.makedirs(output_folder, exist_ok=True)
-
-            st.write("📦 Generating CG PowerPoint files...")
-            try:
-                zip_file_path = generate_individual_ppts(cv_data_list, template_male_path, template_female_path, output_folder)
-            except Exception as e:
-                        st.error(f"❌ PPTs couldnt be generated : {str(e)}")
-
-
+ 
+                output_folder = "/tmp/generated_ppts"
+                os.makedirs(output_folder, exist_ok=True)
+                try:
+                    zip_file_path = generate_individual_ppts(
+                        st.session_state.cg_cv_data_list,
+                        template_male_path,
+                        template_female_path,
+                        output_folder
+                    )
+                    st.session_state.cg_zip_file_path = zip_file_path
+                except Exception as e:
+                    st.error(f"❌ PPTs couldn't be generated: {str(e)}")
+ 
+        # Store downloadables
+        st.session_state['csv'] = csv
+        st.session_state['excel'] = excel_data
+        st.session_state['cv_zip'] = zip_buffer
+        st.session_state.cv_processing_done = True
+ 
+# Download buttons after processing
+if st.session_state.cv_processing_done:
     col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
-
     with col1:
-        st.download_button(
-            label="⬇️Scores (CSV)",
-            data=csv,
-            file_name='matching_scores.csv',
-            mime='text/csv'
-        )
-
+        st.download_button("⬇️Scores (CSV)", data=st.session_state['csv'], file_name='matching_scores.csv', mime='text/csv')
     with col2:
-        st.download_button(
-            label="⬇️Scores (Excel)",
-            data=excel_data,
-            file_name='matching_scores.xlsx',
-            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
-
+        st.download_button("⬇️Scores (Excel)", data=st.session_state['excel'], file_name='matching_scores.xlsx',
+                           mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     with col3:
-        st.download_button(
-            label="⬇️CVs(ZIP)",
-            data=zip_buffer,
-            file_name='selected_cvs.zip',
-            mime='application/zip'
-        )
-
+        st.download_button("⬇️CVs (ZIP)", data=st.session_state['cv_zip'], file_name='selected_cvs.zip', mime='application/zip')
     with col4:
-        with open(zip_file_path, "rb") as f:
-            st.download_button(
-                label="⬇️CVs (CG Format)",
-                data=f,
-                file_name="CVs_CG_Format.zip",
-                mime="application/zip"
-            )
-    st.session_state.submit_pressed = False   
+        with open(st.session_state.cg_zip_file_path, "rb") as f:
+            st.download_button("⬇️CVs (CG Format)", data=f, file_name="CVs_CG_Format.zip", mime="application/zip")
+    
 
 
         
