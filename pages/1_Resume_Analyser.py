@@ -626,135 +626,54 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                 zip_file.writestr(uploaded_cv.name, uploaded_cv.getvalue())
     zip_buffer.seek(0)
 
-    # do this only if submit button is pressed before and cg_cv_button is pressed 
-    # if st.session_state.submit_pressed:
-    #     if cg_cv_button:
+    # generate CG ppts         
+    templates_folder = "template"
+    template_male_path = os.path.join(templates_folder, "cg_template_male.pptx")
+    template_female_path = os.path.join(templates_folder, "cg_template_female.pptx")
 
-    #         # Define folder path for templates
-    #         templates_folder = "template"  # Path to the folder containing  templates
+    if not os.path.exists(template_male_path) or not os.path.exists(template_female_path):
+        st.error("Template files not found. Ensure both 'cg_template_male.pptx' and 'cg_template_female.pptx' exist.")
+    else:
+        with st.spinner("🎉 Baking the CVs in our awesome CG template!"):
             
-    #         # Check if the templates are available
-    #         template_male_path = os.path.join(templates_folder, "cg_template_male.pptx")
-    #         template_female_path = os.path.join(templates_folder, "cg_template_female.pptx")
-            
-    #         if not os.path.exists(template_male_path) or not os.path.exists(template_female_path):
-    #             st.error("Template files not found in the specified folder. Please ensure both male_template.pptx and female_template.pptx are available.")
-            
-    #         else:
-    #             with st.spinner("🎉 Baking the CVs in our awesome CG template!"):
-    #                 # get results 
-    #                 cv_data_list = []
-    #                 selected_cv_filenames = selected_rows_df['Resume'].tolist() if not selected_rows_df.empty else edited_df['Resume'].tolist()
-    #                 # Process each resume, extract information, and store the structured data
-    #                 for uploaded_cv in uploaded_cvs:
-    #                     # upload all cvs to supabase for the run  
-    #                     if uploaded_cv is not None: # for all 
-    #                         st.write("Generating role scores..")
-    #                         generate_role_scores_and_upload(uploaded_cv)
 
-                                
-    #                 for uploaded_cv in uploaded_cvs:    
-    #                     if uploaded_cv.name in selected_cv_filenames: # for selected or all 
-    #                         pdf_text = extract_text_from_pdf(uploaded_cv)
-    #                         cleaned_text = clean_text(pdf_text)
-                            
-    #                         llm_extraction = extract_information_from_cv(cleaned_text)
-    #                         #print(str(resume) + " analysed !")
-    #                         time.sleep(1)  # Throttle API requests to avoid hitting limits
-    #                         cv_data_list.append(llm_extraction)
-                
-    #                 # Create an output folder in memory
-    #                 output_folder = "/tmp/generated_ppts"  # Temporary folder for storing generated PPTs
-    #                 os.makedirs(output_folder, exist_ok=True)
-                
-    #                 # Generate individual PowerPoint presentations and zip them
-    #                 st.write("Generating CG ppt..")
-    #                 zip_file_path = generate_individual_ppts(cv_data_list, template_male_path, template_female_path, output_folder)
-    #                 # Provide download link for the zip file
-    #                 col1, col2, col3 = st.columns([2, 2, 2])
-    #                 with col2:
-    #                     with open(zip_file_path, "rb") as f:
-    #                         st.download_button(
-    #                             label="Download CVs (CG Format)",
-    #                             data=f,
-    #                             file_name="CVs_CG_Format.zip",
-    #                             mime="application/zip"
-    #                         )
-                                
-    # else:
-    #     st.warning("👉 Please press the **Submit** button first before generating CVs!")   
-
-    if st.session_state.submit_pressed and st.session_state.cg_cv_button_pressed:
-             
-            templates_folder = "template"
-            template_male_path = os.path.join(templates_folder, "cg_template_male.pptx")
-            template_female_path = os.path.join(templates_folder, "cg_template_female.pptx")
-     
-            if not os.path.exists(template_male_path) or not os.path.exists(template_female_path):
-                st.error("Template files not found. Ensure both 'cg_template_male.pptx' and 'cg_template_female.pptx' exist.")
+            # Build the list of selected filenames
+            if not selected_rows_df.empty:
+                selected_cv_filenames = selected_rows_df['Resume'].tolist()
+            elif not edited_df.empty:
+                selected_cv_filenames = edited_df['Resume'].tolist()
             else:
-                with st.spinner("🎉 Baking the CVs in our awesome CG template!"):
-                   
-     
-                    # Build the list of selected filenames
-                    if not selected_rows_df.empty:
-                        selected_cv_filenames = selected_rows_df['Resume'].tolist()
-                    elif not edited_df.empty:
-                        selected_cv_filenames = edited_df['Resume'].tolist()
-                    else:
-                        selected_cv_filenames = [cv.name for cv in uploaded_cvs]
-     
-                    st.write("Selected filenames for CG generation:", selected_cv_filenames)
-                    st.session_state.cv_data_list =[]
-                    # Second pass: generate CG slides only for selected CVs
-                    for uploaded_cv in uploaded_cvs:
-                            if uploaded_cv.name in selected_cv_filenames:
-                                try:
-                                    st.write(f"🧠 Extracting information from: {uploaded_cv.name}")
-                                    pdf_text = extract_text_from_pdf(uploaded_cv)
-                                    cleaned_text = clean_text(pdf_text)
-                                    llm_extraction = extract_information_from_cv(cleaned_text)
-         
-                                    if llm_extraction:
-                                        st.session_state.cv_data_list.append(llm_extraction)
-                                    else:
-                                        st.warning(f"No data extracted from {uploaded_cv.name}")
-         
-                                    time.sleep(1)  # To avoid API limits
-                                except Exception as e:
-                                    st.error(f"❌ Error processing {uploaded_cv.name}: {str(e)}")
-     
-                    if not st.session_state.cv_data_list:
-                        st.error("🚫 No CVs matched or were extracted properly. Please check your input or selections.")
-                    else:
+                selected_cv_filenames = [cv.name for cv in uploaded_cvs]
 
-                        output_folder = "/tmp/generated_ppts"
-                        os.makedirs(output_folder, exist_ok=True)
-     
-                        st.write("📦 Generating CG PowerPoint files...")
+            st.write("Selected filenames for CG generation:", selected_cv_filenames)
+            # Second pass: generate CG slides only for selected CVs
+            for uploaded_cv in uploaded_cvs:
+                    if uploaded_cv.name in selected_cv_filenames:
                         try:
-                            zip_file_path = generate_individual_ppts(st.session_state.cv_data_list, template_male_path, template_female_path, output_folder)
-                            col1, col2, col3 = st.columns([2, 2, 2])
-                            with col2:
-                                with open(zip_file_path, "rb") as f:
-                                    st.download_button(
-                                        label="⬇️ Download CVs (CG Format)",
-                                        data=f,
-                                        file_name="CVs_CG_Format.zip",
-                                        mime="application/zip"
-                                    )
-                                    st.session_state.cg_cv_button_pressed = False
-                        except Exception as e:
-                            st.error(f"❌ Failed to generate PPTs: {str(e)}")
-    # else:
-    #     st.warning("👉 Please press the **Submit** button first before generating CVs!")
+                            st.write(f"🧠 Extracting information from: {uploaded_cv.name}")
+                            pdf_text = extract_text_from_pdf(uploaded_cv)
+                            cleaned_text = clean_text(pdf_text)
+                            llm_extraction = extract_information_from_cv(cleaned_text)
 
-    # Show download buttons
-    col1, col2, col3 = st.columns([2, 2, 2])
+                            time.sleep(1)  # To avoid API limits
+                        except Exception as e:
+                            st.error(f"❌ Error processing {uploaded_cv.name}: {str(e)}")
+
+                output_folder = "/tmp/generated_ppts"
+                os.makedirs(output_folder, exist_ok=True)
+
+                st.write("📦 Generating CG PowerPoint files...")
+                try:
+                    zip_file_path = generate_individual_ppts(st.session_state.cv_data_list, template_male_path, template_female_path, output_folder)
+                except Exception as e:
+                            st.error(f"❌ PPTs couldnt be generated : {str(e)}")
+
+
+    col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
 
     with col1:
         st.download_button(
-            label="Download Scores (CSV)",
+            label="⬇️Scores (CSV)",
             data=csv,
             file_name='matching_scores.csv',
             mime='text/csv'
@@ -762,7 +681,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
 
     with col2:
         st.download_button(
-            label="Download Scores (Excel)",
+            label="⬇️Scores (Excel)",
             data=excel_data,
             file_name='matching_scores.xlsx',
             mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -770,11 +689,21 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
 
     with col3:
         st.download_button(
-            label="Download Selected CVs (ZIP)",
+            label="⬇️Selected CVs (ZIP)",
             data=zip_buffer,
             file_name='selected_cvs.zip',
             mime='application/zip'
         )
+
+    with col4:
+        with open(zip_file_path, "rb") as f:
+            st.download_button(
+                label="⬇️Download CVs (CG Format)",
+                data=f,
+                file_name="CVs_CG_Format.zip",
+                mime="application/zip"
+            )
+
 
         
 
