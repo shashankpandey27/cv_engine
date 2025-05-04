@@ -69,10 +69,26 @@ with col2:
 # Filtering logic
 filtered = []
 for row in data:
-    name_match = search_query in row["name"].lower()
-    role_match = selected_role == "All" or selected_role in row["role_scores"]
-    if name_match and role_match:
-        filtered.append(row)
+    role_scores = row.get("role_scores", {})
+    if not role_scores:
+        continue
+ 
+    # Identify main (top scoring) skill
+    main_role, main_score = max(role_scores.items(), key=lambda x: x[1])
+ 
+    # Apply role filter only to main role
+    if selected_role_filter != "Any" and selected_role_filter != main_role:
+        continue
+    if main_score < min_score:
+        continue
+ 
+    # Also apply name search filter
+    if selected_role != "All" and selected_role not in role_scores:
+        continue
+    if search_query and search_query not in row["name"].lower():
+        continue
+ 
+    filtered.append(row)
  
 # Display warning if no results
 if not filtered:
