@@ -659,14 +659,14 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                         except Exception as e:
                             st.error(f"❌ Error processing {uploaded_cv.name}: {str(e)}")
 
-                output_folder = "/tmp/generated_ppts"
-                os.makedirs(output_folder, exist_ok=True)
+            output_folder = "/tmp/generated_ppts"
+            os.makedirs(output_folder, exist_ok=True)
 
-                st.write("📦 Generating CG PowerPoint files...")
-                try:
-                    zip_file_path = generate_individual_ppts(st.session_state.cv_data_list, template_male_path, template_female_path, output_folder)
-                except Exception as e:
-                            st.error(f"❌ PPTs couldnt be generated : {str(e)}")
+            st.write("📦 Generating CG PowerPoint files...")
+            try:
+                zip_file_path = generate_individual_ppts(st.session_state.cv_data_list, template_male_path, template_female_path, output_folder)
+            except Exception as e:
+                        st.error(f"❌ PPTs couldnt be generated : {str(e)}")
 
 
     col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
