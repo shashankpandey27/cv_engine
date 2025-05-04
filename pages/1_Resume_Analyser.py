@@ -179,17 +179,7 @@ def match_jds_with_cvs(jd_texts, cv_texts, weightage):
         scores.append(jd_scores)
         results.append(jd_results)
         
-        # print("len(jd_texts):", len(jd_texts))
-        # print("len(uploaded_jds):", len(uploaded_jds))
-        # print("len(cv_texts):", len(cv_texts))
-        # print("len(uploaded_cvs):", len(uploaded_cvs))
-        # print("len(results):", len(results))
-
-        # for idx, r in enumerate(results):
-        #     print(f"len(results[{idx}]):", len(r))
-
-
-        
+       
         data = []
 
         # Make sure 'uploaded_jds' and 'uploaded_cvs' are available
