@@ -648,7 +648,7 @@ if st.session_state.get('cv_processing_done'):
             use_container_width=True,
             hide_index=True,
             key = "data_editor",
-            column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
+            #column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
             #disabled=True
         )
  
