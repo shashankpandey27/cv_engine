@@ -746,31 +746,29 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                     else:
                         selected_cv_filenames = [cv.name for cv in uploaded_cvs]
      
-                    st.write("Selected filenames for CG generation:", selected_cv_filenames)    
+                    st.write("Selected filenames for CG generation:", selected_cv_filenames)
 
-     
-                    # Second pass: generate CG slides only for selected CVs
-                    
-                    for uploaded_cv in uploaded_cvs:
-                        if uploaded_cv.name in selected_cv_filenames:
-                            try:
-                                st.write(f"🧠 Extracting information from: {uploaded_cv.name}")
-                                pdf_text = extract_text_from_pdf(uploaded_cv)
-                                cleaned_text = clean_text(pdf_text)
-                                llm_extraction = extract_information_from_cv(cleaned_text)
-     
-                                if llm_extraction:
-                                    st.session_state.cv_data_list.append(llm_extraction)
-                                else:
-                                    st.warning(f"No data extracted from {uploaded_cv.name}")
-     
-                                time.sleep(1)  # To avoid API limits
-                            except Exception as e:
-                                st.error(f"❌ Error processing {uploaded_cv.name}: {str(e)}")
      
                     if not st.session_state.cv_data_list:
                         st.error("🚫 No CVs matched or were extracted properly. Please check your input or selections.")
                     else:
+                        # Second pass: generate CG slides only for selected CVs
+                        for uploaded_cv in uploaded_cvs:
+                            if uploaded_cv.name in selected_cv_filenames:
+                                try:
+                                    st.write(f"🧠 Extracting information from: {uploaded_cv.name}")
+                                    pdf_text = extract_text_from_pdf(uploaded_cv)
+                                    cleaned_text = clean_text(pdf_text)
+                                    llm_extraction = extract_information_from_cv(cleaned_text)
+         
+                                    if llm_extraction:
+                                        st.session_state.cv_data_list.append(llm_extraction)
+                                    else:
+                                        st.warning(f"No data extracted from {uploaded_cv.name}")
+         
+                                    time.sleep(1)  # To avoid API limits
+                                except Exception as e:
+                                    st.error(f"❌ Error processing {uploaded_cv.name}: {str(e)}")
                         output_folder = "/tmp/generated_ppts"
                         os.makedirs(output_folder, exist_ok=True)
      
