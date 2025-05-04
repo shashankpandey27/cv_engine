@@ -574,6 +574,7 @@ if st.session_state.submit_pressed and not st.session_state.get('cv_processing_d
             scores_df,
             use_container_width=True,
             hide_index=True,
+            key = "editable_data_editor",
             column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
         )
         st.session_state['edited_df'] = edited_df
@@ -646,6 +647,7 @@ if st.session_state.get('cv_processing_done'):
             edited_df,
             use_container_width=True,
             hide_index=True,
+            key = "readonly_data_editor",
             column_config={"Selected": st.column_config.CheckboxColumn(required=False)},
             disabled=True
         )
