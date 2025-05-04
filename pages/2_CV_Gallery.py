@@ -67,24 +67,22 @@ with col2:
     search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
  
 # Filtering logic
+
 filtered = []
 for row in data:
     role_scores = row.get("role_scores", {})
     if not role_scores:
         continue
  
-    # Identify main (top scoring) skill
-    main_role, main_score = max(role_scores.items(), key=lambda x: x[1])
+    # Get top 3 roles by score
+    top_roles = sorted(role_scores.items(), key=lambda x: x[1], reverse=True)[:3]
+    top_role_names = [role for role, _ in top_roles]
  
-    # Apply role filter only to main role
-    if selected_role != "All" and selected_role != main_role:
+    # Filter by selected role (must be in top 3)
+    if selected_role != "All" and selected_role not in top_role_names:
         continue
-    # if main_score < min_score:
-    #     continue
  
-    # Also apply name search filter
-    if selected_role != "All" and selected_role not in role_scores:
-        continue
+    # Filter by search query on name
     if search_query and search_query not in row["name"].lower():
         continue
  
