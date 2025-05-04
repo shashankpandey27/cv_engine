@@ -79,8 +79,8 @@ for row in data:
     # Apply role filter only to main role
     if selected_role != "All" and selected_role != main_role:
         continue
-    if main_score < min_score:
-        continue
+    # if main_score < min_score:
+    #     continue
  
     # Also apply name search filter
     if selected_role != "All" and selected_role not in role_scores:
