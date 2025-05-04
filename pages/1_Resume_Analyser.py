@@ -748,7 +748,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
      
                     st.write("Selected filenames for CG generation:", selected_cv_filenames)
 
-                                            # Second pass: generate CG slides only for selected CVs
+                    # Second pass: generate CG slides only for selected CVs
                     for uploaded_cv in uploaded_cvs:
                             if uploaded_cv.name in selected_cv_filenames:
                                 try:
@@ -785,6 +785,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                                         file_name="CVs_CG_Format.zip",
                                         mime="application/zip"
                                     )
+                                    st.session_state.cg_cv_button_pressed = False
                         except Exception as e:
                             st.error(f"❌ Failed to generate PPTs: {str(e)}")
     else:
