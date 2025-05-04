@@ -595,7 +595,7 @@ if st.session_state.submit_pressed and not st.session_state.get('cv_processing_d
         # Prepare ZIP of selected CVs
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-            selected_cv_filenames = edited_df['Resume'].tolist()
+            selected_cv_filenames = scores_df['Resume'].tolist()
             for uploaded_cv in uploaded_cvs:
                 if uploaded_cv.name in selected_cv_filenames:
                     zip_file.writestr(uploaded_cv.name, uploaded_cv.getvalue())
