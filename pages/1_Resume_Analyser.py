@@ -565,7 +565,7 @@ if submit_button:
 
 
 # Main processing block
-if st.session_state.submit_pressed:
+if st.session_state.submit_pressed and not st.session_state.get('cv_processing_done'):
     if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None:
         scores_df = st.session_state['scores_df'].round(4)
         if 'Selected' not in scores_df.columns:
@@ -638,8 +638,18 @@ if st.session_state.submit_pressed:
         st.session_state['cv_zip'] = zip_buffer
         st.session_state.cv_processing_done = True
  
-# Download buttons after processing
+# Render Data Table and Download buttons if processing is done
 if st.session_state.get('cv_processing_done'):
+    edited_df = st.session_state.get('edited_df')
+    if edited_df is not None:
+        st.data_editor(
+            edited_df,
+            use_container_width=True,
+            hide_index=True,
+            column_config={"Selected": st.column_config.CheckboxColumn(required=False)},
+            disabled=True
+        )
+ 
     col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
     with col1:
         st.download_button("⬇️Scores (CSV)", data=st.session_state['csv'], file_name='matching_scores.csv', mime='text/csv')
@@ -652,7 +662,6 @@ if st.session_state.get('cv_processing_done'):
         if 'cg_zip_file_path' in st.session_state and os.path.exists(st.session_state.cg_zip_file_path):
             with open(st.session_state.cg_zip_file_path, "rb") as f:
                 st.download_button("⬇️CVs (CG Format)", data=f, file_name="CVs_CG_Format.zip", mime="application/zip")
-    
 
 
         
