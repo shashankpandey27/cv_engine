@@ -487,8 +487,8 @@ if "submit_pressed" not in st.session_state:
     st.session_state.submit_pressed = False
 if "cg_cv_button_pressed" not in st.session_state:
     st.session_state.cg_cv_button_pressed = False
-if "cv_data_list" not in st.session_state:
-    st.session_state.cv_data_list =[]
+# if "cv_data_list" not in st.session_state:
+#     st.session_state.cv_data_list =[]
     
 # Button definitions 
 col1, col2, col3 = st.columns([2, 1, 0.5])
@@ -664,7 +664,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
 
             st.write("📦 Generating CG PowerPoint files...")
             try:
-                zip_file_path = generate_individual_ppts(st.session_state.cv_data_list, template_male_path, template_female_path, output_folder)
+                zip_file_path = generate_individual_ppts(cv_data_list, template_male_path, template_female_path, output_folder)
             except Exception as e:
                         st.error(f"❌ PPTs couldnt be generated : {str(e)}")
 
@@ -689,7 +689,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
 
     with col3:
         st.download_button(
-            label="⬇️Selected CVs (ZIP)",
+            label="⬇️CVs(ZIP)",
             data=zip_buffer,
             file_name='selected_cvs.zip',
             mime='application/zip'
@@ -698,7 +698,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
     with col4:
         with open(zip_file_path, "rb") as f:
             st.download_button(
-                label="⬇️Download CVs (CG Format)",
+                label="⬇️CVs (CG Format)",
                 data=f,
                 file_name="CVs_CG_Format.zip",
                 mime="application/zip"
