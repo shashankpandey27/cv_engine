@@ -746,8 +746,8 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                                     st.session_state.cg_cv_button_pressed = False
                         except Exception as e:
                             st.error(f"❌ Failed to generate PPTs: {str(e)}")
-    else:
-        st.warning("👉 Please press the **Submit** button first before generating CVs!")
+    # else:
+    #     st.warning("👉 Please press the **Submit** button first before generating CVs!")
 
     # Show download buttons
     col1, col2, col3 = st.columns([2, 2, 2])
