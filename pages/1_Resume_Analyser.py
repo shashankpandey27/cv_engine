@@ -536,7 +536,7 @@ col1, col2, col3 = st.columns([2, 1, 0.5])
 with col1:
     submit_button = st.button("Submit", type="primary")
     if submit_button:
-        st.session_state.submit_pressed = True
+        st.session_state.submit_pressed = True # persist submit state 
  
 with col3:
     reset_button = st.button("Reset All", type="primary")
@@ -547,7 +547,10 @@ with col3:
 with col2:
     cg_cv_button = st.button("Generate Capgemini CVs", type="primary")
     if cg_cv_button:
-        st.session_state.cg_cv_button_pressed = True
+        if st.session_state.submit_pressed:
+            st.session_state.cg_cv_button_pressed = True
+        else:
+            st.warning("Please press the **Submit** buttom first before generating CG format CVs")
 
 st.markdown("<br>", unsafe_allow_html = True)       
 
@@ -565,7 +568,7 @@ if reset_button:
 if submit_button:
     # Check missing inputs and give proper warnings
     if not user_api_key:
-        st.warning("🚨 Please enter your Gemini API key in the sidebar before proceeding.")
+        ("🚨 Please enter your Gemini API key in the sidebar before proceeding.")
     elif not uploaded_jds:
         st.warning("📄 Please upload at least one Job Description (JD) PDF.")
     elif not uploaded_cvs:
