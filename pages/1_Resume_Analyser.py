@@ -463,49 +463,7 @@ def generate_role_scores_and_upload(uploaded_cv):
             }).execute()
             st.success("Uploaded and scored successfully!")
             
-# def generate_role_scores_and_upload(uploaded_cv): 
-#     try:
-#         pdf_text = extract_text_from_pdf(uploaded_cv)
-#         cleaned_text = clean_text(pdf_text)
-#         role_scores = extract_role_scores(cleaned_text)
- 
-#         if role_scores:
-#             best_role = max(role_scores, key=role_scores.get)
-#             filename = uploaded_cv.name.replace(" ", "_")
-#             public_path = f"{best_role}/{uuid.uuid4()}_{filename}"
- 
-#             # Check for duplicate in DB
-#             try:
-#                 existing = supabase.table("cvs_table").select("*").eq("file_name", filename).execute()
-#                 if existing.data:
-#                     st.warning(f"{filename} already exists in the database.")
-#                     return
-#             except Exception as e:
-#                 st.error(f"❌ Error checking existing CV in Supabase: {e}")
-#                 return
- 
-#             try:
-#                 # Upload file to Supabase Storage
-#                 supabase.storage.from_(BUCKET_NAME).upload(public_path, uploaded_cv.read())
- 
-#                 # Get public URL
-#                 url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
- 
-#                 # Insert metadata into DB
-#                 supabase.table("cvs_table").insert({
-#                     "name": role_scores.get("Name", "Unknown"),
-#                     "file_name": filename,
-#                     "role_scores": role_scores,
-#                     "download_url": url
-#                 }).execute()
- 
-#                 st.success(f"✅ {filename} uploaded and scored successfully!")
- 
-#             except Exception as e:
-#                 st.error(f"❌ Upload or DB insert failed for {filename}: {e}")
- 
-#     except Exception as e:
-#         st.error(f"❌ Failed to process CV {uploaded_cv.name}: {e}")            
+    
 
 
 uploaded_jds = st.file_uploader("Upload Job Description", type=["pdf"], accept_multiple_files=False, 
@@ -747,7 +705,7 @@ if 'scores_df' in st.session_state and st.session_state['scores_df'] is not None
                         selected_cv_filenames = [cv.name for cv in uploaded_cvs]
      
                     st.write("Selected filenames for CG generation:", selected_cv_filenames)
-
+                    st.session_state.cv_data_list =[]
                     # Second pass: generate CG slides only for selected CVs
                     for uploaded_cv in uploaded_cvs:
                             if uploaded_cv.name in selected_cv_filenames:
