@@ -15,20 +15,41 @@ ROLES = [
 ]
  
 def extract_role_scores(cv_text):
+
     prompt = f"""
-    From this CV text: '''{cv_text}''', score the candidate from 0-100 for the following roles:
- 
-    {', '.join(ROLES)} 
-    Also extract Name of the candidate 
-    **Name:** Full name in CAPITAL LETTERS (if available)
-    Return JSON like:
+    You are a highly critical CV evaluator.
+     
+    Given the following CV text:
+    '''{cv_text}'''
+     
+    Evaluate and score the candidate (0 to 100) ONLY for roles that are clearly demonstrated with strong evidence of experience or skills. Be extremely selective — assign high scores ONLY if the candidate has significant, clearly stated experience for that role.
+     
+    Roles to evaluate:
+    {', '.join(ROLES)}
+     
+    Also extract:
+    - **Name** — The full name of the candidate (preferably in CAPITAL LETTERS if found in the CV).
+    - **Technical Skills** — A concise list of specific technical skills or tools mentioned in the CV (e.g., Python, SQL, Azure, Spark). Keep it under 20 items.
+     
+    Return output in strict JSON format like:
     {{
-      "Name" : "XYZ",
-      "Data Scientist": 85,
-      "Data Engineer": 65,
+      "Name": "JOHN DOE",
+      "Technical Skills": ["Python", "Spark", "SQL", "Docker"],
+      "Data Scientist": 82,
+      "Machine Learning Engineer": 77,
       ...
     }}
-    Only include roles that are relevant with a score >= 20. Name should always be included.
+     
+    Guidelines:
+    - Do NOT include roles where there is little or no evidence. Only include roles with score >= 20.
+    - Score 80+ ONLY if the candidate shows deep expertise and hands-on experience (not just mention of the skill).
+    - Score 50–70 if there is moderate experience (e.g., 1–3 projects or partial involvement).
+    - Score below 50 for light mentions or minor experience.
+    - Score 20 if it’s barely relevant.
+    - Omit any role with score < 20.
+    - The "Name" and "Technical Skills" keys are **mandatory**.
+     
+    Be extremely objective and conservative — avoid inflating scores. Only include roles that the CV truly supports.
     """
     response = ask_gemini(prompt)
     try:
