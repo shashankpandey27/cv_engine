@@ -647,9 +647,9 @@ if st.session_state.get('cv_processing_done'):
             edited_df,
             use_container_width=True,
             hide_index=True,
-            key = "readonly_data_editor",
-            column_config={"Selected": st.column_config.CheckboxColumn(required=False)},
-            disabled=True
+            key = "data_editor",
+            column_config={"Selected": st.column_config.CheckboxColumn(required=False)}
+            #disabled=True
         )
  
     col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
