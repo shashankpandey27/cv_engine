@@ -449,7 +449,8 @@ def generate_role_scores_and_upload(uploaded_cv):
                 "file_name": filename,
                 "role_scores": role_score_only,
                 "technical_skills" : role_scores.get("Technical Skills",[]),
-                "download_url": url
+                "download_url": url,
+                "experience":role_scores.get("Experience","N/A"),
             }).execute()
             st.success("Uploaded and scored successfully!")
             
