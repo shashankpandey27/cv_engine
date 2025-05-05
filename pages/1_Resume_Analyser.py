@@ -451,6 +451,8 @@ def generate_role_scores_and_upload(uploaded_cv):
                 "technical_skills" : role_scores.get("Technical Skills",[]),
                 "download_url": url,
                 "experience":role_scores.get("Experience","N/A"),
+                "gender":role_scores.get("Gender","Unknown"), 
+                "languages":role_scores.get("Languages",[])
             }).execute()
             st.success("Uploaded and scored successfully!")
             
