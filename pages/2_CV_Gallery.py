@@ -60,7 +60,7 @@ with col3:
     skill_query = st.text_input("🛠️ Search by Technical Skill").strip().lower()
 with col4: 
     # Search by Language
-    skill_query = st.text_input("🗣️ Search by Language").strip().lower()
+    lang_query = st.text_input("🗣️ Search by Language").strip().lower()
  
 # Filtering logic
 
