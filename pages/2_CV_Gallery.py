@@ -47,7 +47,7 @@ with st.sidebar:
 # Extract all unique role types
 all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
 
-col1 , col2 , col3 = st.columns([1,2,2])
+col1 , col2 , col3 = st.columns([1,2,2,2])
 
 with col1:
     # Main role filter dropdown
@@ -57,7 +57,10 @@ with col2:
     search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
 with col3: 
     # Search by technical skill
-    skill_query = st.text_input("🛠 Search by Technical Skill").strip().lower()
+    skill_query = st.text_input("🛠️ Search by Technical Skill").strip().lower()
+with col4: 
+    # Search by Language
+    skill_query = st.text_input("🗣️ Search by Language").strip().lower()
  
 # Filtering logic
 
@@ -83,6 +86,12 @@ for row in data:
     skills = row.get("technical_skills", [])
     skill_text = ", ".join(skills).lower() if isinstance(skills, list) else str(skills).lower()
     if skill_query and skill_query not in skill_text:
+        continue
+
+    # Filter by Language search
+    languages = row.get("languages", [])
+    lang_text = ", ".join(languages).lower() if isinstance(languages, list) else str(languages).lower()
+    if lang_query and lang_query not in lang_text:
         continue
  
     filtered.append(row)
