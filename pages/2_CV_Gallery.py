@@ -149,8 +149,8 @@ else:
                         box-shadow: 0 2px 6px rgba(0,0,0,0.1); min-height: 240px;
                         transition: transform 0.3s;">
         <strong style="font-size: 14px;">{person['name']}</strong><br><br>
-        <strong>📅 Experience:</strong><br>{experience} years<br>
-        <strong>👤 Gender:</strong><br>{gender} years<br>
+        <strong>📅 Experience:</strong>{experience} years<br>
+        <strong>👤 Gender:</strong>{gender}<br>
         <strong>🗣️ Languages:</strong><br>
         <div style="font-size: 13px; margin-top: 5px;">{langs_str}</div>
         <strong>🛠️ Technical Skills:</strong><br>
