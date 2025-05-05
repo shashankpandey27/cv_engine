@@ -55,6 +55,8 @@ with col1:
 with col2: 
     # Search by candidate name
     search_query = st.text_input("🔍 Search Candidate by Name").strip().lower()
+    # Search by technical skill
+    skill_query = st.text_input("🛠 Search by Technical Skill").strip().lower()
  
 # Filtering logic
 
@@ -74,6 +76,12 @@ for row in data:
  
     # Filter by search query on name
     if search_query and search_query not in row["name"].lower():
+        continue
+
+    # Filter by skill search
+    skills = row.get("technical_skills", [])
+    skill_text = ", ".join(skills).lower() if isinstance(skills, list) else str(skills).lower()
+    if skill_query and skill_query not in skill_text:
         continue
  
     filtered.append(row)
