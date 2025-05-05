@@ -47,7 +47,7 @@ with st.sidebar:
 # Extract all unique role types
 all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
 
-col1 , col2 , col3 = st.columns([1,2,2,2])
+col1 , col2 , col3, col4 = st.columns([1,2,2,2])
 
 with col1:
     # Main role filter dropdown
