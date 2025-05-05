@@ -31,7 +31,7 @@ def extract_role_scores(cv_text):
     - **Name** — The full name of the candidate (preferably in CAPITAL LETTERS if found in the CV).
     - **Technical Skills** — A concise list of specific technical skills or tools mentioned in the CV (e.g., Python, SQL, Azure, Spark). Keep it under 20 items.
     = **Total Experience** - Total years of profession experience (numeric only e.g , 5.5)
-    - **Languages Spoken** - List of Languages spoken by the candidate
+    - **Languages Spoken** - List of Languages spoken by the candidate , defaults to English if nothing is mentioned.
     - **Gender**- Gender of the candidate (male or female)
      
     Return output in strict JSON format like:
