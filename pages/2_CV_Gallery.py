@@ -150,9 +150,8 @@ else:
                         transition: transform 0.3s;">
         <strong style="font-size: 14px;">{person['name']}</strong><br><br>
         <strong>📅 Experience:</strong>{experience} years<br>
-        <strong>👤 Gender:</strong>{gender}<br>
-        <strong>🗣️ Languages:</strong><br>
-        <div style="font-size: 13px; margin-top: 5px;">{langs_str}</div>
+        <strong>🧑 Gender:</strong>{gender}<br>
+        <strong>🗣️ Languages:</strong>{langs_str}<br>
         <strong>🛠️ Technical Skills:</strong><br>
         <div style="font-size: 13px; margin-top: 5px;">{skill_str}</div>
         </div>
