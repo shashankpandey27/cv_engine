@@ -140,11 +140,13 @@ else:
                 else:
                     skills = person.get("technical_skills", [])
                     skill_str = ", ".join(skills) if isinstance(skills, list) else str(skills)
+                    experience = person.get("experience","N/A")
                     st.markdown(f"""
         <div style="padding: 12px; border-radius: 10px; background-color: #eef8ff;
                         box-shadow: 0 2px 6px rgba(0,0,0,0.1); min-height: 240px;
                         transition: transform 0.3s;">
         <strong style="font-size: 14px;">{person['name']}</strong><br><br>
+        <strong>📅 Experience:</strong><br>{experience} years<br><br>
         <strong>🛠 Technical Skills:</strong><br>
         <div style="font-size: 13px; margin-top: 5px;">{skill_str}</div>
         </div>
