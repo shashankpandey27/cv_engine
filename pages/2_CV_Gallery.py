@@ -88,41 +88,64 @@ else:
     for row in rows:
         cols = st.columns(len(row))
         for col, person in zip(cols, row):
-            with col:
-                html = f"""
+    with col:
+        candidate_id = person.get("id", person["name"])  # Ensure unique key
+        tile_key = f"flip_{candidate_id}"
+        if tile_key not in st.session_state:
+            st.session_state[tile_key] = False
+ 
+        def flip_card(key=tile_key):
+            st.session_state[key] = not st.session_state[key]
+ 
+        # Flip button (small)
+        if st.button("🔄", key=f"{tile_key}_btn", help="Flip card", on_click=flip_card):
+            pass
+ 
+        # FRONT SIDE: Role Scores
+        if not st.session_state[tile_key]:
+            html = f"""
 <div style="padding: 12px; border-radius: 10px; background-color: #f9f9f9;
-                             box-shadow: 0 2px 6px rgba(0,0,0,0.1); min-height: 240px;
-                             transition: transform 0.3s; cursor: pointer;"
-                             onmouseover="this.style.transform='scale(1.02)'"
-                             onmouseout="this.style.transform='scale(1)'">
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1); min-height: 240px;
+                transition: transform 0.3s;">
 <strong style="font-size: 14px;">{person['name']}</strong><br><br>
-                """
- 
-                top_roles = sorted(
-                    [(r, s) for r, s in person["role_scores"].items()],
-                    key=lambda x: x[1], reverse=True
-                )[:5]
- 
-                for role, score in top_roles:
-                    color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
-                    html += f"""
+            """
+            top_roles = sorted(
+                [(r, s) for r, s in person["role_scores"].items()],
+                key=lambda x: x[1], reverse=True
+            )[:5]
+            for role, score in top_roles:
+                color = "#4CAF50" if score >= 80 else "#FFC107" if score >= 60 else "#F44336"
+                html += f"""
 <div style="margin-bottom: 4px;">
 <small><strong>{role}</strong></small>
 <div style="background-color:#e0e0e0; border-radius:6px;">
 <div style="width:{score}%; background:{color}; color:white;
-                                     padding:3px 0; font-size:11px; text-align:center;">
-                                    {score}%
+                            padding:3px 0; font-size:11px; text-align:center;">
+                            {score}%
 </div>
 </div>
 </div>
-                    """
- 
-                if person.get("download_url"):
-                    html += f"""
+                """
+            if person.get("download_url"):
+                html += f"""
 <a href="{person['download_url']}" target="_blank"
-                           style="text-decoration:none; font-size:13px;">📄 Download CV</a>
-                    """
-                else:
-                    html += "<div style='color:red; font-size:12px;'>⚠️ No download link</div>"
-                html += "</div>"
-                st.markdown(html, unsafe_allow_html=True)
+                    style="text-decoration:none; font-size:13px;">📄 Download CV</a>
+                """
+            else:
+                html += "<div style='color:red; font-size:12px;'>⚠️ No download link</div>"
+            html += "</div>"
+            st.markdown(html, unsafe_allow_html=True)
+ 
+        # BACK SIDE: Technical Skills
+        else:
+            skills = person.get("technical_skills", [])
+            skill_str = ", ".join(skills) if isinstance(skills, list) else str(skills)
+            st.markdown(f"""
+<div style="padding: 12px; border-radius: 10px; background-color: #eef8ff;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1); min-height: 240px;
+                transition: transform 0.3s;">
+<strong style="font-size: 14px;">{person['name']}</strong><br><br>
+<strong>🛠 Technical Skills:</strong><br>
+<div style="font-size: 13px; margin-top: 5px;">{skill_str}</div>
+</div>
+            """, unsafe_allow_html=True)
