@@ -9,8 +9,8 @@ def ask_gemini(prompt):
     return response.text
 
 ROLES = [
-    "Data Scientist", "Data Engineer", "Full Stack Developer",
-    "Frontend Developer", "Backend Developer", "GenAI Expert",
+    "Data Scientist", "Data Engineer", "Full Stack Developer","Data Analyst",
+    "Frontend Developer", "Backend Developer", "GenAI Expert","Data Governance","Data Privacy",
     "UI/UX", "Business Intelligence", "ML Engineer", "DevOps", "Project Management"
 ]
  
