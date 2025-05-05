@@ -12,10 +12,6 @@ st.set_page_config(layout="wide")
 with st.spinner("Loading data ..."):
      st.title("🎓 Candidate CV Gallery")
     
-#      # Caching the fetch
-# @st.cache_data(show_spinner="Fetching candidate data...")
-# def fetch_candidates():
-#     return supabase.table("cvs_table").select("*").execute().data
  
 # --- Caching Supabase data ---
 @st.cache_data(ttl=600)
@@ -38,10 +34,6 @@ with st.sidebar:
 
     authenticator = get_authenticator()
     authenticator.logout()
-    #selected_role_filter = st.selectbox("Role", ["Any"])
-    #min_score = st.slider("Minimum Score", 0, 100, 0)
-    # Score slider for filtering
-    #min_score = st.slider("🔘 Filter by Minimum Score", 0, 100, 0)
     st.markdown(
         """
 <marquee behavior="scroll" direction="left" style="color:#0070AD; font-size:13px">
@@ -51,8 +43,6 @@ with st.sidebar:
         unsafe_allow_html=True
     )
  
-# Load data once
-#data = fetch_candidates()
  
 # Extract all unique role types
 all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
