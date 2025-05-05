@@ -89,7 +89,7 @@ else:
         cols = st.columns(len(row))
         for col, person in zip(cols, row):
             with col:
-                candidate_id = person.get("id", person["name"])  # Ensure unique key
+                candidate_id = person.get("file_name", person["name"])  # Ensure unique key
                 tile_key = f"flip_{candidate_id}"
                 if tile_key not in st.session_state:
                     st.session_state[tile_key] = False
