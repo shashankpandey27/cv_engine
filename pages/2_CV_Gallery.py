@@ -142,7 +142,7 @@ else:
                     skill_str = ", ".join(skills) if isinstance(skills, list) else str(skills)
                     experience = person.get("experience","N/A")
                     gender = person.get("gender","Unknown")
-                    languages = person.get("gender","Unknown")
+                    languages = person.get("languages","Unknown")
                     langs_str = ", ".join(languages) if isinstance(languages, list) else str(languages)
                     st.markdown(f"""
         <div style="padding: 12px; border-radius: 10px; background-color: #eef8ff;
