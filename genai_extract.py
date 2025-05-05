@@ -31,11 +31,15 @@ def extract_role_scores(cv_text):
     - **Name** — The full name of the candidate (preferably in CAPITAL LETTERS if found in the CV).
     - **Technical Skills** — A concise list of specific technical skills or tools mentioned in the CV (e.g., Python, SQL, Azure, Spark). Keep it under 20 items.
     = **Total Experience** - Total years of profession experience (numeric only e.g , 5.5)
+    - **Languages Spoken** - List of Languages spoken by the candidate
+    - **Gender**- Gender of the candidate (male or female)
      
     Return output in strict JSON format like:
     {{
       "Name": "JOHN DOE",
       "Technical Skills": ["Python", "Spark", "SQL", "Docker"],
+      "Languages": ["Arabic", "English", "French"],
+      "Gender":"male",
       "Experience" : 5.5, 
       "Data Scientist": 82,
       "Machine Learning Engineer": 77,
@@ -49,7 +53,7 @@ def extract_role_scores(cv_text):
     - Score below 50 for light mentions or minor experience.
     - Score 20 if it’s barely relevant.
     - Omit any role with score < 20.
-    - The "Name" and "Technical Skills" keys are **mandatory**.
+    - The "Name" , "Languages" and "Technical Skills" keys are **mandatory**.
      
     Be extremely objective and conservative — avoid inflating scores. Only include roles that the CV truly supports.
     """
