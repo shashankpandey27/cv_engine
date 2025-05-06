@@ -2,7 +2,6 @@ import streamlit as st
 from supabase_client import supabase, BUCKET_NAME
 from Login import get_authenticator
 
-
 if st.session_state.get("authentication_status") != True:
     st.warning("Please login to access this page.")
     st.stop()
