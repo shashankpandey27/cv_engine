@@ -439,7 +439,7 @@ def generate_role_scores_and_upload(uploaded_cv):
             st.warning("This CV already exists.")
         else:
             # Upload file
-            file_bytes = BytesIO(uploaded_cv.read())
+            file_bytes = uploaded_cv.read()
             supabase.storage.from_(BUCKET_NAME).upload(public_path, file_bytes,
                                                        file_options = {"Content-Type": "application/pdf", "upsert": "true"})
  
