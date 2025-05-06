@@ -439,7 +439,8 @@ def generate_role_scores_and_upload(uploaded_cv):
             st.warning("This CV already exists.")
         else:
             # Upload file
-            supabase.storage.from_(BUCKET_NAME).upload(public_path, uploaded_cv.read(), {"content-type": "application/pdf"})
+            supabase.storage.from_(BUCKET_NAME).upload(public_path, uploaded_cv.read(),
+                                                       file_options = {"Content-Type": "application/pdf", "upsert": "true"})
  
             # Get public URL
             url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
