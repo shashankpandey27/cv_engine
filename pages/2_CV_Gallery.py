@@ -159,7 +159,7 @@ else:
                     skill_str = ", ".join(skills) if isinstance(skills, list) else str(skills)
                     experience = person.get("experience","N/A")
                     gender = person.get("gender","Unknown").strip().capitalize()
-                    bg_color = "#e6f0ff" if gender == "Male" else "#ffe6f0" if gender = "Female" else "#f9f9f9"
+                    bg_color = "#e6f0ff" if gender == "Male" else "#ffe6f0" if gender == "Female" else "#f9f9f9"
                     languages = person.get("languages","Unknown")
                     langs_str = ", ".join(languages) if isinstance(languages, list) else str(languages)
                     show_arabic_flag = any("arabic" in lang.lower() for lang in languages)
