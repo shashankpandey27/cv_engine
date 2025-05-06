@@ -75,34 +75,34 @@ def ask_gemini(prompt):
 
 
 # --- Upload Function ---
-def upload_to_supabase(uploaded_file):
-    file_name = uploaded_file.name
-    file_bytes = BytesIO(uploaded_file.read())
-    file_path = f"{file_name}"
+# def upload_to_supabase(uploaded_file):
+#     file_name = uploaded_file.name
+#     file_bytes = BytesIO(uploaded_file.read())
+#     file_path = f"{file_name}"
  
-    # Simulate upsert: delete if it already exists
-    try:
-        supabase.storage.from_(BUCKET_NAME).remove([file_path])
-    except Exception as e:
-        pass  # Ignore errors (e.g. file not found)
+#     # Simulate upsert: delete if it already exists
+#     try:
+#         supabase.storage.from_(BUCKET_NAME).remove([file_path])
+#     except Exception as e:
+#         pass  # Ignore errors (e.g. file not found)
  
-    # Upload the file
-    try:
-        response = supabase.storage.from_(BUCKET_NAME).upload(
-            path = file_path,
-            file = file_bytes
-        )
-    except Exception as e:
-        st.error(f"Upload failed: {e}")
-        return None
+#     # Upload the file
+#     try:
+#         response = supabase.storage.from_(BUCKET_NAME).upload(
+#             path = file_path,
+#             file = file_bytes
+#         )
+#     except Exception as e:
+#         st.error(f"Upload failed: {e}")
+#         return None
  
-    # Get public URL
-    try:
-        public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(file_path)
-        return public_url
-    except Exception as e:
-        st.error(f"Failed to generate public URL: {e}")
-        return None
+#     # Get public URL
+#     try:
+#         public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(file_path)
+#         return public_url
+#     except Exception as e:
+#         st.error(f"Failed to generate public URL: {e}")
+#         return None
 
 
 # Function to call the OpenAI API for matching JDs with CVs
@@ -439,7 +439,8 @@ def generate_role_scores_and_upload(uploaded_cv):
             st.warning("This CV already exists.")
         else:
             # Upload file
-            supabase.storage.from_(BUCKET_NAME).upload(public_path, uploaded_cv.read(),
+            file_bytes = BytesIO(uploaded_cv.read())
+            supabase.storage.from_(BUCKET_NAME).upload(public_path, file_bytes,
                                                        file_options = {"Content-Type": "application/pdf", "upsert": "true"})
  
             # Get public URL
