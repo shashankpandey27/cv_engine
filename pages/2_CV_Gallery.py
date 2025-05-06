@@ -23,7 +23,11 @@ if "refresh" not in st.session_state:
  
 # Refresh button
 if st.button("🔄 Refresh Candidates"):
-        st.session_state.refresh = True 
+        st.session_state.refresh = True
+        st.cache_data.clear()
+        data = load_data()
+
+# first load 
 data = load_data() if not st.session_state.refresh else supabase.table("cvs_table").select("*").execute().data
 st.session_state.refresh = False  # Reset flag
  
