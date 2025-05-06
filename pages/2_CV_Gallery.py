@@ -74,7 +74,12 @@ for row in data:
         continue
  
     # Get top 3 roles by score
-    top_roles = sorted(role_scores.items(), key=lambda x: x[1], reverse=True)[:3]
+    #top_roles = sorted(role_scores.items(), key=lambda x: x[1], reverse=True)[:3]
+    top_roles = sorted(
+                        [(role, score) for role, score in role_scores.items() if role.lower() != "experience"],
+                        key=lambda x: x[1],
+                        reverse=True
+                    )[:3]
     top_role_names = [role for role, _ in top_roles]
  
     # Filter by selected role (must be in top 3)
