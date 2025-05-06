@@ -131,7 +131,7 @@ else:
                         key=lambda x: x[1], reverse=True
                     )[:5]
                     for role, score in top_roles:
-                        color = "#4F7728" if score >= 80 else "#FCBF49" if score >= 60 else "#BC4749"
+                        color = "#A8D5BA" if score >= 80 else "#F9E79F" if score >= 60 else "#F5B7B1"
                         html += f"""
         <div style="margin-bottom: 4px;">
         <small><strong>{role}</strong></small>
