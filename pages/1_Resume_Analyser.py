@@ -77,7 +77,7 @@ def ask_gemini(prompt):
 # --- Upload Function ---
 def upload_to_supabase(uploaded_file):
     file_name = uploaded_file.name
-    file_bytes = (uploaded_file.read()
+    file_bytes = uploaded_file.read()
     file_path = f"{file_name}"
  
     # Simulate upsert: delete if it already exists
@@ -440,15 +440,16 @@ def generate_role_scores_and_upload(uploaded_cv):
             st.warning("This CV already exists.")
         else:
             # Upload file
-            file_bytes = uploaded_cv.read()
+            # file_bytes = uploaded_cv.read()
             # file_like_object = io.BytesIO(file_bytes)
             # file_like_object.seek(0)
             #st.info(f"Size of uploadef file: {len(file_bytes)} bytes")
-            supabase.storage.from_(BUCKET_NAME).upload(public_path, file_bytes,
-                                                       file_options = {"Content-Type": "application/pdf", "upsert": "true"})
+            # supabase.storage.from_(BUCKET_NAME).upload(public_path, file_bytes,
+            #                                            file_options = {"Content-Type": "application/pdf", "upsert": "true"})
  
             # Get public URL
-            url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
+            # url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
+            url = upload_to_supabase(uploaded_cv)
  
             # Save metadata
             supabase.table("cvs_table").insert({
