@@ -431,7 +431,7 @@ def generate_role_scores_and_upload(uploaded_cv):
         best_role = max(role_score_only, key=role_score_only.get)
         best_role = best_role.replace(" ","_")
         filename = uploaded_cv.name.replace(" ", "_")
-        public_path = f"{best_role}/{uuid.uuid4()}_{filename}"
+        public_path = f"{best_role}/{uuid.uuid4()}_{filename}.pdf"
  
         # Check duplicate
         existing = supabase.table("cvs_table").select("*").eq("file_name", filename).execute()
