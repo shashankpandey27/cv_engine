@@ -76,7 +76,7 @@ def ask_gemini(prompt):
 # --- Upload Function ---
 def upload_to_supabase(uploaded_file):
     file_name = uploaded_file.name
-    file_bytes = uploaded_file.read()
+    file_bytes = BytesIO(uploaded_file.read())
     file_path = f"uploads/{file_name}"
  
     # Simulate upsert: delete if it already exists
