@@ -76,8 +76,8 @@ def ask_gemini(prompt):
 # --- Upload Function ---
 def upload_to_supabase(uploaded_file):
     file_name = uploaded_file.name
-    #file_bytes = BytesIO(uploaded_file.read())
-    file_path = f"uploads/{file_name}"
+    file_bytes = BytesIO(uploaded_file.read())
+    file_path = f"{file_name}"
  
     # Simulate upsert: delete if it already exists
     try:
@@ -88,9 +88,9 @@ def upload_to_supabase(uploaded_file):
     # Upload the file
     try:
         response = supabase.storage.from_(BUCKET_NAME).upload(
-            path=file_path,
-            file=uploaded_file.read(),
-            file_options = {"content_type": "application/pdf"} )
+            path = file_path,
+            file = file_bytes
+        )
     except Exception as e:
         st.error(f"Upload failed: {e}")
         return None
