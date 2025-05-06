@@ -440,8 +440,10 @@ def generate_role_scores_and_upload(uploaded_cv):
         else:
             # Upload file
             file_bytes = uploaded_cv.read()
-            st.info(f"Size of uploadef file: {len(file_bytes)} bytes")
-            supabase.storage.from_(BUCKET_NAME).upload(public_path, file_bytes,
+            file_like_object = io.BytesIO(file_bytes)
+            file_like_object.seek(0)
+            #st.info(f"Size of uploadef file: {len(file_bytes)} bytes")
+            supabase.storage.from_(BUCKET_NAME).upload(public_path, file_like_object,
                                                        file_options = {"Content-Type": "application/pdf", "upsert": "true"})
  
             # Get public URL
