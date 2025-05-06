@@ -48,7 +48,7 @@ with st.sidebar:
  
  
 # Extract all unique role types
-all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role and role!= "Experience"})
+all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if "experience" not in role.lower()})
 
 col1 , col2 , col3, col4 = st.columns([1,2,2,2])
 
