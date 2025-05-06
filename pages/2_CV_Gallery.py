@@ -44,7 +44,7 @@ with st.sidebar:
  
  
 # Extract all unique role types
-all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role})
+all_roles = sorted({role for row in data for role in row.get("role_scores", {}).keys() if role and role!= "Experience"})
 
 col1 , col2 , col3, col4 = st.columns([1,2,2,2])
 
@@ -129,7 +129,7 @@ else:
                     top_roles = sorted(
                         [(r, s) for r, s in person["role_scores"].items()],
                         key=lambda x: x[1], reverse=True
-                    )[:5]
+                    )[:3]
                     for role, score in top_roles:
                         color = "#6FB38B" if score >= 80 else "#F7DC6F" if score >= 60 else "#EC7063"
                         html += f"""
@@ -165,7 +165,7 @@ else:
                     show_arabic_flag = any("arabic" in lang.lower() for lang in languages)
 
                     flag_html = """
-                    <div style="position: absolute; top: 10px; right: 10px; font-size: 20px;">🇸🇦</div>
+                    <div style="position: absolute; top: 10px; right: 10px; font-size: 20px;">ع</div>
                     """ if show_arabic_flag else ""
                      
                     tile_html = f"""
