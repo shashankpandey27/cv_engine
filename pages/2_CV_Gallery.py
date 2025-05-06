@@ -136,7 +136,7 @@ else:
         <strong style="font-size: 14px;">{person['name']}</strong><br><br>
                     """
                     top_roles = sorted(
-                        [(r, s) for r, s in person["role_scores"].items()],
+                        [(r, s) for r, s in person["role_scores"].items() if "experience" not in r.lower()],
                         key=lambda x: x[1], reverse=True
                     )[:3]
                     for role, score in top_roles:
