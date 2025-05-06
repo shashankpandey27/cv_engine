@@ -455,6 +455,7 @@ def generate_role_scores_and_upload(uploaded_cv):
                 "languages":role_scores.get("Languages",[])
             }).execute()
             st.success("Uploaded and scored successfully!")
+            time.sleep(2.5)  # rate limit
             
     
 
@@ -621,7 +622,7 @@ if st.session_state.submit_pressed and not st.session_state.get('cv_processing_d
                             pdf_text = extract_text_from_pdf(uploaded_cv)
                             cleaned_text = clean_text(pdf_text)
                             llm_extraction = extract_information_from_cv(cleaned_text)
-                            time.sleep(1)  # rate limit
+                            time.sleep(2.5)  # rate limit
                             st.session_state.cg_cv_data_list.append(llm_extraction)
                         except Exception as e:
                             st.error(f"❌ Error processing {uploaded_cv.name}: {str(e)}")
