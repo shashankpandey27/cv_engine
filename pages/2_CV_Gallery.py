@@ -115,7 +115,7 @@ else:
                     st.session_state[key] = not st.session_state[key]
          
                 # Flip button (small)
-                if st.button("🔄", key=f"{tile_key}_btn", help="Flip card", on_click=flip_card):
+                if st.button("↔️", key=f"{tile_key}_btn", help="Flip card", on_click=flip_card):
                     pass
          
                 # FRONT SIDE: Role Scores
