@@ -177,7 +177,7 @@ else:
                     <strong>🧑Gender: </strong> {gender}<br>
                     <strong>🛠Technical Skills: </strong><br>
                     <div style="font-size: 13px; margin-top: 5px;">{skill_str}</div><br>
-                    <strong>🌍Languages: </strong> {language_str}<br>
+                    <strong>🌍Languages: </strong> {langs_str}<br>
                     <strong>💼Experience: </strong> {experience} years
                     </div>
                     """
