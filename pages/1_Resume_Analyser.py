@@ -89,7 +89,8 @@ def upload_to_supabase(uploaded_file):
     try:
         response = supabase.storage.from_(BUCKET_NAME).upload(
             path=file_path,
-            file=file_bytes
+            file=file_bytes,
+            options = {"content_type": "application/pdf","upsert":True}
         )
     except Exception as e:
         st.error(f"Upload failed: {e}")
