@@ -159,18 +159,28 @@ else:
                     skills = person.get("technical_skills", [])
                     skill_str = ", ".join(skills) if isinstance(skills, list) else str(skills)
                     experience = person.get("experience","N/A")
-                    gender = person.get("gender","Unknown")
+                    gender = person.get("gender","Unknown").strip().capitalize()
+                    bg_color = "#e6f0ff" if gender == "Male" else "#ffe6f0" if gender = "Female" else "#f9f9f9"
                     languages = person.get("languages","Unknown")
                     langs_str = ", ".join(languages) if isinstance(languages, list) else str(languages)
-                    st.markdown(f"""
-        <div style="padding: 12px; border-radius: 10px; background-color: #eef8ff;
+                    show_arabic_flag = any("arabic" in lang.lower() for lang in languages)
+
+                    flag_html = """
+                    <div style="position: absolute; top: 10px; right: 10px; font-size: 20px;">🇸🇦</div>
+                    """ if show_arabic_flag else ""
+                     
+                    tile_html = f"""
+                    <div style="position: relative; padding: 12px; border-radius: 10px; background-color: {bg_color};
                         box-shadow: 0 2px 6px rgba(0,0,0,0.1); min-height: 240px;
                         transition: transform 0.3s;">
-        <strong style="font-size: 14px;">{person['name']}</strong><br><br>
-        <strong>📅 Experience: </strong>{experience} years<br>
-        <strong>🧑 Gender: </strong>{str(gender).capitalize()}<br>
-        <strong>🗣️ Languages: </strong>{langs_str}<br>
-        <strong>🛠️ Technical Skills:</strong><br>
-        <div style="font-size: 13px; margin-top: 5px;">{skill_str}</div>
-        </div>
-                    """, unsafe_allow_html=True)
+                        {flag_html}
+                    <strong style="font-size: 14px;">{person['name']}</strong><br><br>
+                    <strong>🧑Gender: </strong> {gender}<br>
+                    <strong>🛠Technical Skills: </strong><br>
+                    <div style="font-size: 13px; margin-top: 5px;">{skill_str}</div><br>
+                    <strong>🌍Languages: </strong> {language_str}<br>
+                    <strong>💼Experience: </strong> {experience} years
+                    </div>
+                    """
+                     
+                    st.markdown(tile_html, unsafe_allow_html=True)
