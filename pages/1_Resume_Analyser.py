@@ -8,6 +8,7 @@ import json
 import re
 import time 
 import io
+from io import BytesIO
 import pandas as pd 
 import base64
 import uuid
