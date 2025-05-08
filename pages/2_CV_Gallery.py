@@ -2,12 +2,14 @@ import streamlit as st
 from supabase_client import supabase, BUCKET_NAME
 from Login import get_authenticator
 
+# Set wide layout
+st.set_page_config(layout="wide")
+
 if st.session_state.get("authentication_status") != True:
     st.warning("Please login to access this page.")
     st.stop()
  
-# Set wide layout
-st.set_page_config(layout="wide")
+
 with st.spinner("Loading data ..."):
      st.title("🎓 Candidate CV Gallery")
     
