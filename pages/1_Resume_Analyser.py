@@ -432,8 +432,8 @@ def generate_role_scores_and_upload(uploaded_cv):
         best_role = max(role_score_only, key=role_score_only.get)
         best_role = best_role.replace(" ","_")
         filename = uploaded_cv.name.replace(" ", "_")
-        #public_path = f"{best_role}/{uuid.uuid4()}_{filename}"
-        public_path = f"{filename}"
+        public_path = f"{best_role}/{uuid.uuid4()}_{filename}"
+        #public_path = f"{filename}"
  
         # Check duplicate
         existing = supabase.table("cvs_table").select("*").eq("file_name", filename).execute()
@@ -441,11 +441,12 @@ def generate_role_scores_and_upload(uploaded_cv):
             st.warning("This CV already exists.")
         else:
             # Upload file
-            file_bytes = uploaded_cv.read()
+            #file_bytes = uploaded_cv.read()
             # file_like_object = io.BytesIO(file_bytes)
             # file_like_object.seek(0)
             #st.info(f"Size of uploadef file: {len(file_bytes)} bytes")
-            supabase.storage.from_(BUCKET_NAME).upload(public_path, file_bytes,
+            with open(uploaded_cv,"rb") as f:
+            supabase.storage.from_(BUCKET_NAME).upload(public_path, f,
                                                        file_options = {"Content-Type": "application/pdf", "upsert": "true"})
  
             # Get public URL
