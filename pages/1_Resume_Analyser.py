@@ -449,7 +449,7 @@ def generate_role_scores_and_upload(uploaded_cv):
                                                        file_options = {"Content-Type": "application/pdf", "upsert": "true"})
  
             # Get public URL
-            # url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
+            url = supabase.storage.from_(BUCKET_NAME).get_public_url(public_path)
             # url = upload_to_supabase(uploaded_cv)
  
             # Save metadata
