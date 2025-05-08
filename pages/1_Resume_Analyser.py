@@ -27,11 +27,13 @@ from genai_extract import extract_role_scores
 import uuid
 from supabase_client import supabase, BUCKET_NAME
 
+st.set_page_config(layout="centered")
+
 if st.session_state.get("authentication_status") != True:
     st.warning("Please login to access this page.")
     st.stop()
 
-st.set_page_config(layout="centered")
+
 
 # Inject logo and favicon
 def add_favicon():
@@ -446,7 +448,7 @@ def generate_role_scores_and_upload(uploaded_cv):
             # file_like_object.seek(0)
             #st.info(f"Size of uploadef file: {len(file_bytes)} bytes")
             #with open(uploaded_cv,"rb") as f:
-            supabase.storage.from_(BUCKET_NAME).upload(public_path, uploaded_cv,
+            supabase.storage.from_(BUCKET_NAME).upload(public_path, io.BytesIO(uploaded_cv.read()),
                                                            file_options = {"Content-Type": "application/pdf", "upsert": "true"})
  
             # Get public URL
